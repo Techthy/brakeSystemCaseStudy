@@ -27,20 +27,4 @@
             genModel="src/main/ecore/brakesystem.genmodel"/>
    </extension>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated Stoex -->
-      <package
-            uri="http://www.example.org/stoex"
-            class="stoex.StoexPackage"
-            genModel="src/main/ecore/Stoex.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated stoex -->
-      <package
-            uri="http://vitruv.tools/stoex/Stoex"
-            class="tools.vitruv.methodologisttemplate.model.stoex.StoexPackage"
-            genModel="src/main/ecore/stoex.genmodel"/>
-   </extension>
-
 </plugin>
