@@ -86,7 +86,7 @@ public class BrakeDiskDiameterUncertaintyTest {
 							.createUncertaintyLocation(List.of(brakeDisk));
 					uncertaintyLocation.setSpecification("FromDisk");
 					Effect uncertaintyEffect = UncertaintyTestFactory.createEffect();
-					uncertaintyEffect.setSpecification("N=(196,5)");
+					uncertaintyEffect.setSpecification("Normal(196.0, 5.0)");
 					uncertaintyEffect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
 					uncertaintyEffect.setStochasticity(StochasticityEffectType.PROBABILISTIC);
 

@@ -12,6 +12,8 @@ import cad.Circle;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
+
 
 import "http://www.example.org/uncertainty" as uncertaintyModel
 import "http://www.example.org/cad" as cadModel
@@ -38,6 +40,8 @@ routine handleBrakeDiskUncertainty(uncertaintyModel::UncertaintyLocation locatio
 
 
     update {
+        System.out.println("-=-=-=- Handling uncertainty for BrakeDisk");
+
         // Check if uncertainty qualifies
         // needs to be a of kind belief
         // the Effect shall have specification that looks like "N=(x,y)"
@@ -47,30 +51,22 @@ routine handleBrakeDiskUncertainty(uncertaintyModel::UncertaintyLocation locatio
         val effect = sourceUncertainty.effect;
 
 		
-        if (sourceUncertainty.kind !== UncertaintyKind.BELIEF_UNCERTAINTY) return;
-        if (effect === null) return;
-        val regex = "N=\\(\\d+,\\d+\\)";
-        val pattern = Pattern.compile(regex);
-		//val effectSpecification = sourceUncertainty.effect.specification;
-        //val matcher = pattern.matcher(effectSpecification);
-        //if (!matcher.matches()) return;
+        //if (effect === null) return;
         if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
         if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
-        // Uncertainty is valid
-
-        // get the expectation value mu from the specification string
-        //val startIdx = effectSpecification.indexOf('(') + 1;
-        //val commaIdx = effectSpecification.indexOf(',', startIdx);
-        //val muStr = effectSpecification.substring(startIdx, commaIdx).trim();
-        //val mu = Integer.parseInt(muStr);
 
 
-        for (correspondingElement : correspondingReferenceList) {
-            if (correspondingElement instanceof Circle) {
-                correspondingElement.setRadius(10);
-            }
-           
-        }
+        // TODO: evaluate String with stoex
+
+        System.out.println("xxxx Effect specification: " + effect.getSpecification());
+        val stoexConsistencyHelper = new StoexConsistencyHelper();
+        val expression = effect.getSpecification() + " + Normal(0.0, 1.0)";
+        System.out.println("xxxx Effect specification: " + effect.getSpecification());
+        val result = stoexConsistencyHelper.evaluateExpression(expression);
+
+        System.out.println("Evaluated expression: " + expression);
+        System.out.println("Evaluation result: " + result);
+
     }
 
 
