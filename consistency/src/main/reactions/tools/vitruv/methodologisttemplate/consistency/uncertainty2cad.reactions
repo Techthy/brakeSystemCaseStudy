@@ -51,23 +51,23 @@ routine handleBrakeDiskUncertainty(uncertaintyModel::UncertaintyLocation locatio
         if (effect === null) return;
         val regex = "N=\\(\\d+,\\d+\\)";
         val pattern = Pattern.compile(regex);
-		val effectSpecification = sourceUncertainty.effect.specification;
-        val matcher = pattern.matcher(effectSpecification);
-        if (!matcher.matches()) return;
+		//val effectSpecification = sourceUncertainty.effect.specification;
+        //val matcher = pattern.matcher(effectSpecification);
+        //if (!matcher.matches()) return;
         if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
         if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
         // Uncertainty is valid
 
         // get the expectation value mu from the specification string
-        val startIdx = effectSpecification.indexOf('(') + 1;
-        val commaIdx = effectSpecification.indexOf(',', startIdx);
-        val muStr = effectSpecification.substring(startIdx, commaIdx).trim();
-        val mu = Integer.parseInt(muStr);
+        //val startIdx = effectSpecification.indexOf('(') + 1;
+        //val commaIdx = effectSpecification.indexOf(',', startIdx);
+        //val muStr = effectSpecification.substring(startIdx, commaIdx).trim();
+        //val mu = Integer.parseInt(muStr);
 
 
         for (correspondingElement : correspondingReferenceList) {
             if (correspondingElement instanceof Circle) {
-                correspondingElement.setRadius(mu / 2);
+                correspondingElement.setRadius(10);
             }
            
         }

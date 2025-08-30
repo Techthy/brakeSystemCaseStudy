@@ -73,10 +73,10 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                 val newUncertaintyLocation = UncertaintyFactory.eINSTANCE.createUncertaintyLocation();
                 newUncertaintyLocation.getReferencedComponents.add(correspondingElement);
                 newUncertaintyLocation.setLocation(location.getLocation());
-                newUncertaintyLocation.setSpecification(location.getSpecification());
+                //newUncertaintyLocation.setSpecification(location.getSpecification());
                 
                 val newEffect = UncertaintyFactory.eINSTANCE.createEffect();
-                newEffect.setSpecification(sourceEffect.getSpecification());
+                //newEffect.setSpecification(sourceEffect.getSpecification());
                 newEffect.setRepresentation(sourceEffect.getRepresentation());
                 newEffect.setStochasticity(sourceEffect.getStochasticity());
 
@@ -109,12 +109,12 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                     containingUncertainty.reducability == sourceUncertainty.reducability &&
                     containingUncertainty.nature == sourceUncertainty.nature &&
                     containingUncertainty.onDelete == sourceUncertainty.onDelete &&
-                    containingUncertainty.effect.specification == sourceEffect.specification &&
+                    // containingUncertainty.effect.specification == sourceEffect.specification &&
                     containingUncertainty.effect.representation == sourceEffect.representation &&
                     containingUncertainty.effect.stochasticity == sourceEffect.stochasticity &&
                     containingUncertainty.pattern.patternType == sourcePattern.patternType &&
-                    containingUncertainty.perspective.perspective == sourcePerspective.perspective &&
-                    containingUncertainty.perspective.specification == sourcePerspective.specification
+                    containingUncertainty.perspective.perspective == sourcePerspective.perspective
+                    // && containingUncertainty.perspective.specification == sourcePerspective.specification
                 ]
                 if (existingMatch === null) {
                         // Different Uncertainty found, create a new one and new UncertaintyLocation
@@ -297,10 +297,10 @@ routine perspectiveChangedRoutine(uncertaintyModel::UncertaintyPerspective persp
     }
 }
 
-reaction UncertaintyEffectSpecificationChanged {
-    after attribute replaced at uncertaintyModel::Effect[specification] 
-    call effectChangedRoutine(affectedEObject, affectedEObject.eContainer() as Uncertainty)
-}
+//reaction UncertaintyEffectSpecificationChanged {
+//    after attribute replaced at uncertaintyModel::Effect[specification] 
+//    call effectChangedRoutine(affectedEObject, affectedEObject.eContainer() as Uncertainty)
+//}
 
 reaction UncertaintyEffectRepresentationChanged {
     after attribute replaced at uncertaintyModel::Effect[representation] 

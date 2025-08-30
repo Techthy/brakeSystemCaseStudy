@@ -60,9 +60,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="specification" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Effect">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="specification" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="representation" eType="#//StructuralEffectTypeRepresentation"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="stochasticity" eType="#//StochasticityEffectType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="specification" lowerBound="1"
+        eType="ecore:EClass stoex.ecore#//Expression"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="OnDeleteMode">
     <eLiterals name="NO_ACTION"/>
