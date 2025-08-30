@@ -76,6 +76,13 @@
         <version>${vitruv.version}</version>
       </dependency>
 
+      <!-- Stoex dependencies -->
+      <dependency>
+        <groupId>tools.vitruv.stoex</groupId>
+        <artifactId>tools.vitruv.stoex</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+
       <!-- external dependencies-->
       <dependency>
         <groupId>org.eclipse.emf</groupId>

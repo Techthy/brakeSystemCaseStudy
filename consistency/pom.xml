@@ -24,6 +24,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Stoex dependency -->
+        <dependency>
+            <groupId>tools.vitruv.stoex</groupId>
+            <artifactId>tools.vitruv.stoex</artifactId>
+        </dependency>
+
         <!-- Vitruvius dependencies -->
         <dependency>
             <groupId>tools.vitruv</groupId>

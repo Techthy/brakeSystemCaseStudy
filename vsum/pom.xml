@@ -52,6 +52,12 @@
             <artifactId>tools.vitruv.framework.vsum</artifactId>
         </dependency>
 
+        <!-- Stoex dependencies -->
+        <dependency>
+            <groupId>tools.vitruv.stoex</groupId>
+            <artifactId>tools.vitruv.stoex</artifactId>
+        </dependency>
+
         <!-- external dependencies -->
         <dependency>
             <groupId>org.eclipse.emf</groupId>
