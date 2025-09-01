@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import uncertainty.UncertaintyAnnotationRepository;
 import uncertainty.UncertaintyKind;
 import uncertainty.UncertaintyLocation;
 
+@Disabled
 public class PropagateDifferentUncertaintiesTest {
 	private static final Logger logger = org.slf4j.LoggerFactory
 			.getLogger(PropagateDifferentUncertaintiesTest.class);

@@ -1,5 +1,7 @@
 
 import java.util.List;
+import java.util.HashMap;
+
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyLocation;
 import uncertainty.UncertaintyFactory;
@@ -25,48 +27,56 @@ reactions: uncertainty2cad
 in reaction to changes in uncertaintyModel
 execute actions in cadModel
 
-reaction UncertaintyLocationReferencingBrakeDiskInsertedIntoUncertainty {
-    after element EObject inserted in uncertaintyModel::UncertaintyLocation[referencedComponents]
-    call handleBrakeDiskUncertainty(affectedEObject, newValue)
+
+
+
+reaction UncertaintyEffectSpecificationReferencingBrakeDiskChanged {
+    after attribute replaced at uncertaintyModel::Effect[specification] 
+    call handleBrakeDiskUncertainty(affectedEObject, affectedEObject.eContainer() as Uncertainty)
 }
 
+routine handleBrakeDiskUncertainty(uncertaintyModel::Effect effect, uncertaintyModel::Uncertainty uncertainty) {
 
-routine handleBrakeDiskUncertainty(uncertaintyModel::UncertaintyLocation location, EObject referencedElement) {
-    
     match {
-        val correspondingReferenceList = retrieve many EObject corresponding to referencedElement
-        check referencedElement instanceof BrakeDisk
+        val correspondingUncertainties = retrieve many uncertaintyModel::Uncertainty corresponding to uncertainty
+        check uncertainty.uncertaintyLocation.getReferencedComponents().get(0) instanceof BrakeDisk
     }
 
 
     update {
-        System.out.println("-=-=-=- Handling uncertainty for BrakeDisk");
+        System.out.println("-=-=-=- Handling uncertainty for BrakeDisk" + uncertainty);
 
         // Check if uncertainty qualifies
         // needs to be a of kind belief
         // the Effect shall have specification that looks like "N=(x,y)"
         // the EffectTypes within the Effect shall include continuous and probabilistic
-
-        val sourceUncertainty = location.eContainer() as Uncertainty;
-        val effect = sourceUncertainty.effect;
+      
 
 		
-        //if (effect === null) return;
+        if (effect === null) return;
         if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
         if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
 
+        if(effect.getSpecification() === "Effect specification") return;
+        if(effect.getSpecification() === null) return;
+        if(effect.getSpecification() === "") return;
 
-        // TODO: evaluate String with stoex
 
-        System.out.println("xxxx Effect specification: " + effect.getSpecification());
         val stoexConsistencyHelper = new StoexConsistencyHelper();
-        val expression = effect.getSpecification() + " + Normal(0.0, 1.0)";
-        System.out.println("xxxx Effect specification: " + effect.getSpecification());
+        stoexConsistencyHelper.putVariable("var1", "Normal(0.0, 4.0)");
+        stoexConsistencyHelper.putVariable("var2", effect.getSpecification());
+        val expression = "var1 + var2"
         val result = stoexConsistencyHelper.evaluateExpression(expression);
 
-        System.out.println("Evaluated expression: " + expression);
-        System.out.println("Evaluation result: " + result);
+        System.out.println("    - Evaluated expression: " + expression + " = " + result);
 
+        // Update corresponding uncertainties with the calculated result
+        // TODO: do that possibly only for the component we want to be affected ...
+        System.out.println("    - Found the following corresponding correspondingUncertainties" + correspondingUncertainties);
+        for (correspondingUncertainty : correspondingUncertainties) {
+            System.out.println("    - Updating corresponding uncertainty " + correspondingUncertainty + " with effect specification " + result);
+            correspondingUncertainty.effect.specification = result;
+        } 
     }
 
 

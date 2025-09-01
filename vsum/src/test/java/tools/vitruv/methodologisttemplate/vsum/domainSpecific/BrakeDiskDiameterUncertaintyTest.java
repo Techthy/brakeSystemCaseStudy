@@ -86,7 +86,6 @@ public class BrakeDiskDiameterUncertaintyTest {
 							.createUncertaintyLocation(List.of(brakeDisk));
 					uncertaintyLocation.setSpecification("FromDisk");
 					Effect uncertaintyEffect = UncertaintyTestFactory.createEffect();
-					uncertaintyEffect.setSpecification("Normal(196.0, 5.0)");
 					uncertaintyEffect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
 					uncertaintyEffect.setStochasticity(StochasticityEffectType.PROBABILISTIC);
 
@@ -103,16 +102,49 @@ public class BrakeDiskDiameterUncertaintyTest {
 
 				});
 
-		// Assert that the diameter of the circle is changed to 98
+		// Let the uncertainty propagate
+		// Then change the effect specification to test if the custom rule applies
+
+		logger.info("Modifying the effect specification to Normal(196.0, 5.0) for the brake disk");
+
+		modifyView(UncertaintyTestUtil.getDefaultView(vsum,
+				List.of(UncertaintyAnnotationRepository.class, Brakesystem.class))
+				.withChangeRecordingTrait(),
+				(CommittableView v) -> {
+					Uncertainty uncertainty = v.getRootObjects(UncertaintyAnnotationRepository.class).iterator().next()
+							.getUncertainties().stream()
+							.filter(u -> {
+								UncertaintyLocation location = u.getUncertaintyLocation();
+								return location != null &&
+										location.getReferencedComponents().stream()
+												.anyMatch(BrakeDisk.class::isInstance);
+							})
+							.findFirst()
+							.orElseThrow(() -> new AssertionError("Expected uncertainty not found"));
+					logger.debug("Modifying Effect Spec of following uncertainty: " + uncertainty);
+					logger.debug("Referencing:" + uncertainty.getUncertaintyLocation().getReferencedComponents());
+					uncertainty.getEffect().setSpecification("Normal(196.0, 3.0)");
+				});
+
+		// Assert that the effect specification is now Normal(196, 3) for the circle
 		// (half of the expectation)
 		Assertions.assertTrue(assertView(UncertaintyTestUtil.getDefaultView(vsum,
-				List.of(CADRepository.class)), (View view) -> {
-					return view.getRootObjects(CADRepository.class).iterator().next()
-							.getCadElements()
+				List.of(UncertaintyAnnotationRepository.class)), (View view) -> {
+					Uncertainty uncertainty = view.getRootObjects(UncertaintyAnnotationRepository.class).iterator()
+							.next()
+							.getUncertainties()
 							.stream()
-							.filter(Circle.class::isInstance).map(Circle.class::cast)
-							.filter(d -> d.getRadius() == 98)
-							.findFirst().isPresent();
+							.filter(u -> {
+								UncertaintyLocation location = u.getUncertaintyLocation();
+								return location != null &&
+										location.getReferencedComponents().stream().anyMatch(Circle.class::isInstance);
+							})
+							.findFirst()
+							.orElseThrow(() -> new AssertionError("Expected uncertainty not found"));
+
+					Assertions.assertEquals("Normal(196.0,5.0)",
+							uncertainty.getEffect().getSpecification().replace(" ", ""));
+					return true;
 				}));
 
 	}

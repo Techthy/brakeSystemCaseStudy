@@ -99,6 +99,10 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                 newUncertainty.setPerspective(newPerspective);
                 newUncertainty.setOnDelete(sourceUncertainty.getOnDelete());
 
+                //TODO: Remove
+                //System.out.println("Source Uncertainty: " + sourceUncertainty.getId() + " with location: " + location.getLocation() + " and referenced elements: " + location.getReferencedComponents);
+                //System.out.println("Created new Uncertainty " + newUncertainty.getId() + " for referenced element " + correspondingElement);
+                
                 addCorrespondenceBetween(newUncertainty, sourceUncertainty);
                 annotationRepository.getUncertainties.add(newUncertainty);
             } else {

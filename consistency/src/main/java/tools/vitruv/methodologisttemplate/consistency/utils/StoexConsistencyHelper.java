@@ -20,9 +20,15 @@ import uncertainty.Uncertainty;
 public class StoexConsistencyHelper {
 
     private final StoexEvaluator stoexEvaluator;
+    private final Map<String, Object> variables;
 
     public StoexConsistencyHelper() {
         this.stoexEvaluator = new StoexEvaluator();
+        this.variables = new HashMap<>();
+    }
+
+    public void putVariable(String name, Object value) {
+        variables.put(name, value);
     }
 
     public Object computeAdditionExpression(Expression left, Expression right) {
@@ -34,21 +40,11 @@ public class StoexConsistencyHelper {
      * Evaluates a stoex expression with the given variables.
      * 
      * @param expression The stoex expression as a string
-     * @param variables  Map of variable names to values
      * @return The evaluation result
      */
-    public Object evaluateExpression(String expression, Map<String, Object> variables) {
-        return stoexEvaluator.evaluate(expression, variables);
-    }
-
-        /**
-     * Evaluates a stoex expression with the given variables.
-     * 
-     * @param expression The stoex expression as a string
-     * @return The evaluation result
-     */
-    public Object evaluateExpression(String expression) {
-        return stoexEvaluator.evaluate(expression, new HashMap<>());
+    public String evaluateExpression(String expression) {
+        Object result = stoexEvaluator.evaluate(expression, variables);
+        return stoexEvaluator.serialize(result);
     }
 
 
