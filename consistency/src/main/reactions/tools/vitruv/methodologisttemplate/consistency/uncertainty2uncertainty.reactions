@@ -73,7 +73,7 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                 val newUncertaintyLocation = UncertaintyFactory.eINSTANCE.createUncertaintyLocation();
                 newUncertaintyLocation.getReferencedComponents.add(correspondingElement);
                 newUncertaintyLocation.setLocation(location.getLocation());
-                //newUncertaintyLocation.setSpecification(location.getSpecification());
+                newUncertaintyLocation.setSpecification(location.getSpecification());
                 
                 val newEffect = UncertaintyFactory.eINSTANCE.createEffect();
                 //newEffect.setSpecification(sourceEffect.getSpecification());
@@ -117,8 +117,8 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                     containingUncertainty.effect.representation == sourceEffect.representation &&
                     containingUncertainty.effect.stochasticity == sourceEffect.stochasticity &&
                     containingUncertainty.pattern.patternType == sourcePattern.patternType &&
-                    containingUncertainty.perspective.perspective == sourcePerspective.perspective
-                    // && containingUncertainty.perspective.specification == sourcePerspective.specification
+                    containingUncertainty.perspective.perspective == sourcePerspective.perspective && 
+                    containingUncertainty.perspective.specification == sourcePerspective.specification
                 ]
                 if (existingMatch === null) {
                         // Different Uncertainty found, create a new one and new UncertaintyLocation
@@ -128,7 +128,8 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                         newUncertaintyLocation.setSpecification(location.getSpecification());
                         
                         val newEffect = UncertaintyFactory.eINSTANCE.createEffect();
-                        newEffect.setSpecification(sourceEffect.getSpecification());
+                        //needs to be handled by separate reaction (stoex)
+                        //newEffect.setSpecification(sourceEffect.getSpecification());
                         newEffect.setRepresentation(sourceEffect.getRepresentation());
                         newEffect.setStochasticity(sourceEffect.getStochasticity());
 
@@ -323,7 +324,7 @@ routine effectChangedRoutine(uncertaintyModel::Effect effect, uncertaintyModel::
     update {
         // Update all corresponding uncertainties with the new values from the sourceUncertainty
         for (correspondingUncertainty : uncertaintiesList) {
-            correspondingUncertainty.getEffect().setSpecification(sourceUncertainty.getEffect().getSpecification());
+            // correspondingUncertainty.getEffect().setSpecification(sourceUncertainty.getEffect().getSpecification());
             correspondingUncertainty.getEffect().setRepresentation(sourceUncertainty.getEffect().getRepresentation());
             correspondingUncertainty.getEffect().setStochasticity(sourceUncertainty.getEffect().getStochasticity());
         }

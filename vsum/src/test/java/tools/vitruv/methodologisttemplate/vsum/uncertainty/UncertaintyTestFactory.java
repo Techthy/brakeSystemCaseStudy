@@ -34,7 +34,8 @@ public class UncertaintyTestFactory {
 		return location;
 	}
 
-	public static UncertaintyLocation createUncertaintyLocationWithLocationType(List<EObject> referencedComponents, UncertaintyLocationType locationtype) {
+	public static UncertaintyLocation createUncertaintyLocationWithLocationType(List<EObject> referencedComponents,
+			UncertaintyLocationType locationtype) {
 		UncertaintyLocation location = UncertaintyFactory.eINSTANCE.createUncertaintyLocation();
 		location.setLocation(locationtype);
 		location.setSpecification("Location specification");
@@ -44,7 +45,6 @@ public class UncertaintyTestFactory {
 
 	public static Effect createEffect() {
 		Effect effect = UncertaintyFactory.eINSTANCE.createEffect();
-		effect.setSpecification("Effect specification");
 		effect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
 		effect.setStochasticity(StochasticityEffectType.PROBABILISTIC);
 		return effect;
@@ -93,7 +93,8 @@ public class UncertaintyTestFactory {
 	 * 
 	 * Helper
 	 * 
-	 * @param location UncertaintyLocation object, that references the actual EObject location of Uncertainty
+	 * @param location UncertaintyLocation object, that references the actual
+	 *                 EObject location of Uncertainty
 	 * @return Uncertainty object as specified in related work.
 	 */
 	public static Uncertainty createUncertainty1CameraComponent(Optional<UncertaintyLocation> location) {
@@ -118,7 +119,8 @@ public class UncertaintyTestFactory {
 	 * 
 	 * Helper
 	 * 
-	 * @param location UncertaintyLocation object, that references the actual EObject location of Uncertainty
+	 * @param location UncertaintyLocation object, that references the actual
+	 *                 EObject location of Uncertainty
 	 * @return Uncertainty object as specified in related work.
 	 */
 	public static Uncertainty createUncertainty2CameraObjectRecognition(Optional<UncertaintyLocation> location) {
@@ -143,7 +145,8 @@ public class UncertaintyTestFactory {
 	 * 
 	 * Helper
 	 * 
-	 * @param location UncertaintyLocation object, that references the actual EObject location of Uncertainty
+	 * @param location UncertaintyLocation object, that references the actual
+	 *                 EObject location of Uncertainty
 	 * @return Uncertainty object as specified in related work.
 	 */
 	public static Uncertainty createUncertainty3CameraObjectRecognition(Optional<UncertaintyLocation> location) {

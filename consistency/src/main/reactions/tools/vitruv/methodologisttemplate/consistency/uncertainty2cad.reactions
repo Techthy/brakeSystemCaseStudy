@@ -43,23 +43,14 @@ routine handleBrakeDiskUncertainty(uncertaintyModel::Effect effect, uncertaintyM
     }
 
 
+    // Check if uncertainty qualifies
+    // needs to be a of kind belief
+    // the EffectTypes within the Effect shall include continuous and probabilistic		
     update {
-        System.out.println("-=-=-=- Handling uncertainty for BrakeDisk" + uncertainty);
-
-        // Check if uncertainty qualifies
-        // needs to be a of kind belief
-        // the Effect shall have specification that looks like "N=(x,y)"
-        // the EffectTypes within the Effect shall include continuous and probabilistic
-      
-
-		
         if (effect === null) return;
         if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
         if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
-
-        if(effect.getSpecification() === "Effect specification") return;
         if(effect.getSpecification() === null) return;
-        if(effect.getSpecification() === "") return;
 
 
         val stoexConsistencyHelper = new StoexConsistencyHelper();
@@ -68,13 +59,10 @@ routine handleBrakeDiskUncertainty(uncertaintyModel::Effect effect, uncertaintyM
         val expression = "var1 + var2"
         val result = stoexConsistencyHelper.evaluateExpression(expression);
 
-        System.out.println("    - Evaluated expression: " + expression + " = " + result);
 
         // Update corresponding uncertainties with the calculated result
         // TODO: do that possibly only for the component we want to be affected ...
-        System.out.println("    - Found the following corresponding correspondingUncertainties" + correspondingUncertainties);
         for (correspondingUncertainty : correspondingUncertainties) {
-            System.out.println("    - Updating corresponding uncertainty " + correspondingUncertainty + " with effect specification " + result);
             correspondingUncertainty.effect.specification = result;
         } 
     }

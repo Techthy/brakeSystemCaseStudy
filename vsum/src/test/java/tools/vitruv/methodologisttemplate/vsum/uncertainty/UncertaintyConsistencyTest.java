@@ -374,7 +374,6 @@ public class UncertaintyConsistencyTest {
 			Uncertainty uncertainty = UncertaintyTestFactory
 					.createUncertainty(Optional.of(uncertaintyLocation));
 			Effect effect = UncertaintyTestFactory.createEffect();
-			effect.setSpecification("effectOne");
 			effect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
 			effect.setStochasticity(StochasticityEffectType.NON_DETERMINISTIC);
 			uncertainty.setEffect(effect);
@@ -388,6 +387,9 @@ public class UncertaintyConsistencyTest {
 		});
 
 		// Assert that two uncertainties now exist both having the same effect
+		// The effect specification is exempted as the stochastic expressions need to be
+		// held
+		// consistent with specific reactions
 		Assertions.assertTrue(
 				assertView(UncertaintyTestUtil.getDefaultView(vsum,
 						List.of(UncertaintyAnnotationRepository.class)),
@@ -396,25 +398,12 @@ public class UncertaintyConsistencyTest {
 									UncertaintyAnnotationRepository.class)
 									.iterator().next().getUncertainties();
 							return uncertainties.size() == 2 && uncertainties.stream()
-									.allMatch(u -> u.getEffect().getSpecification()
-											.equals("effectOne")
-											&& u.getEffect()
-													.getRepresentation() == StructuralEffectTypeRepresentation.CONTINOUS
+									.allMatch(u -> u.getEffect()
+											.getRepresentation() == StructuralEffectTypeRepresentation.CONTINOUS
 											&& u.getEffect()
 													.getStochasticity() == StochasticityEffectType.NON_DETERMINISTIC);
 
 						}));
-		// Change specification of the effect to "effectTwo"
-		modifyView(UncertaintyTestUtil.getDefaultView(vsum, List.of(UncertaintyAnnotationRepository.class))
-				.withChangeRecordingTrait(), (CommittableView v) -> {
-					List<Uncertainty> uncertainties = v
-							.getRootObjects(UncertaintyAnnotationRepository.class)
-							.iterator().next().getUncertainties();
-					Uncertainty firstUncertainty = uncertainties.get(0);
-					Effect effect = firstUncertainty.getEffect();
-					effect.setSpecification("effectTwo");
-
-				});
 
 		// Change the representation of the effect to DISCRETE
 		modifyView(UncertaintyTestUtil.getDefaultView(vsum, List.of(UncertaintyAnnotationRepository.class))
@@ -448,10 +437,8 @@ public class UncertaintyConsistencyTest {
 									UncertaintyAnnotationRepository.class)
 									.iterator().next().getUncertainties();
 							return uncertainties.size() == 2 && uncertainties.stream()
-									.allMatch(u -> u.getEffect().getSpecification()
-											.equals("effectTwo")
-											&& u.getEffect()
-													.getRepresentation() == StructuralEffectTypeRepresentation.DISCRETE
+									.allMatch(u -> u.getEffect()
+											.getRepresentation() == StructuralEffectTypeRepresentation.DISCRETE
 											&& u.getEffect()
 													.getStochasticity() == StochasticityEffectType.PROBABILISTIC);
 
