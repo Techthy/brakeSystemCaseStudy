@@ -37,9 +37,7 @@ public class BrakeDiskDiameterUncertaintyTest {
 
 	@BeforeAll
 	static void setup() {
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("*",
-				new XMIResourceFactoryImpl());
-
+		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 	}
 
 	@Test

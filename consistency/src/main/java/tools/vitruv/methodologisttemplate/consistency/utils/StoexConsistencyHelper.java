@@ -47,6 +47,11 @@ public class StoexConsistencyHelper {
         return stoexEvaluator.serialize(result);
     }
 
+    public Object evaluateToStoexExpression(String expression) {
+        return stoexEvaluator.evaluate(expression, variables);
+    }
+
+    // TODO remove unused methods below
 
     /**
      * Calculates brake disk circumference with uncertainty propagation.

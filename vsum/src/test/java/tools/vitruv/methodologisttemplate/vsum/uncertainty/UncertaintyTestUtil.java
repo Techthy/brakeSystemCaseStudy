@@ -14,6 +14,7 @@ import cad.CADRepository;
 import cad.Circle;
 import mir.reactions.brakesystem2cad.Brakesystem2cadChangePropagationSpecification;
 import mir.reactions.cad2brakesystem.Cad2brakesystemChangePropagationSpecification;
+import mir.reactions.uncertainty2brakesystem.Uncertainty2brakesystemChangePropagationSpecification;
 import mir.reactions.uncertainty2cad.Uncertainty2cadChangePropagationSpecification;
 import mir.reactions.uncertainty2uncertainty.Uncertainty2uncertaintyChangePropagationSpecification;
 import tools.vitruv.change.propagation.ChangePropagationMode;
@@ -40,10 +41,11 @@ public class UncertaintyTestUtil {
 				.withUserInteractorForResultProvider(
 						new TestUserInteraction.ResultProvider(new TestUserInteraction()))
 				.withChangePropagationSpecification(new Brakesystem2cadChangePropagationSpecification())
+				.withChangePropagationSpecification(new Cad2brakesystemChangePropagationSpecification())
+				.withChangePropagationSpecification(new Uncertainty2brakesystemChangePropagationSpecification())
+				.withChangePropagationSpecification(new Uncertainty2cadChangePropagationSpecification())
 				.withChangePropagationSpecification(
 						new Uncertainty2uncertaintyChangePropagationSpecification())
-				.withChangePropagationSpecification(new Cad2brakesystemChangePropagationSpecification())
-				.withChangePropagationSpecification(new Uncertainty2cadChangePropagationSpecification())
 				.buildAndInitialize();
 		model.setChangePropagationMode(ChangePropagationMode.TRANSITIVE_CYCLIC);
 		return model;

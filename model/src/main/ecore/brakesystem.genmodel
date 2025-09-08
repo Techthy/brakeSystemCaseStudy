@@ -28,6 +28,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference brakesystem.ecore#//BrakeCaliper/brakePads"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/pistonDiameterInMM"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/brakeDiskThickness"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/hydraulicPressureInBar"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/clampingForceInN"/>
     </genClasses>
     <genClasses ecoreClass="brakesystem.ecore#//BrakeHose">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeHose/threadSize1"/>

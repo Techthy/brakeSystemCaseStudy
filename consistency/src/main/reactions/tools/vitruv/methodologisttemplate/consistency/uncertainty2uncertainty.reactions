@@ -105,7 +105,7 @@ routine createCorrespondingUncertaintyReference(uncertaintyModel::UncertaintyLoc
                 
                 addCorrespondenceBetween(newUncertainty, sourceUncertainty);
                 annotationRepository.getUncertainties.add(newUncertainty);
-            } else {
+            } else {   
                 // Check if there is any existing Uncertainty that matches sourceUncertainty
                 val existingMatch = uncertaintyLocationsWithSameReference.findFirst[ 
                     val containingUncertainty = eContainer as Uncertainty
@@ -348,7 +348,7 @@ routine locationChangedRoutine(uncertaintyModel::UncertaintyLocation location, u
     update {
         // Update all corresponding uncertainties with the new values from the sourceUncertainty
         for (correspondingUncertainty : uncertaintiesList) {
-            correspondingUncertainty.getUncertaintyLocation().setSpecification(location.getSpecification());
+            //correspondingUncertainty.getUncertaintyLocation().setSpecification(location.getSpecification());
             correspondingUncertainty.getUncertaintyLocation().setLocation(location.getLocation());
         }
     }

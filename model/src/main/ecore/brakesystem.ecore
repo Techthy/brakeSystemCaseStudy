@@ -24,6 +24,9 @@
         eType="#//BrakePad" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="pistonDiameterInMM" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="brakeDiskThickness" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hydraulicPressureInBar"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="clampingForceInN" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BrakeHose" eSuperTypes="#//BrakeComponent">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="threadSize1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
