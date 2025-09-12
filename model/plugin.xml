@@ -12,14 +12,6 @@
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated uncertainty -->
-      <package
-            uri="http://vitruv.tools/stoex/Stoex"
-            class="stoex.StoexPackage"
-            genModel="src/main/ecore/uncertainty.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cad -->
       <package
             uri="http://www.example.org/cad"
