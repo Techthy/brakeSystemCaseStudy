@@ -10,6 +10,16 @@ Workflow {
     bean = StandaloneSetup {
         scanClassPath = true
         platformUri = workspaceRoot
+
+        uriMap = {
+			from = "platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.ecore"
+			to = "platform:/resource/tools.vitruv.stoex/model/generated/Stoex.ecore"
+		}
+
+    uriMap = {
+			from = "platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.genmodel"
+			to = "platform:/resource/tools.vitruv.stoex/model/generated/Stoex.genmodel"
+		}
     }
 
     component = EcoreGenerator {

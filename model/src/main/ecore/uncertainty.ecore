@@ -24,6 +24,9 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//UncertaintySource"
         containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="ecore:EClass  platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.ecore#//Expression"
+        containment="true"/>
+        
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="UncertaintyKind">
     <eLiterals name="BeliefUncertainty" value="1"/>
