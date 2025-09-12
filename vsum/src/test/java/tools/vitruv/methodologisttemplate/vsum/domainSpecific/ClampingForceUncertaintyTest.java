@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -46,6 +47,80 @@ public class ClampingForceUncertaintyTest {
 	static void setup() {
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("*",
 				new XMIResourceFactoryImpl());
+	}
+
+	@Test
+	@DisplayName("Try referencing parameters as uncertainty location via EStructuralFeature")
+	void testEStructuralFeature(@TempDir Path tempDir) {
+		VirtualModel vsum = UncertaintyTestUtil.createDefaultVirtualModel(tempDir);
+		UncertaintyTestUtil.registerRootObjects(vsum, tempDir);
+
+		CommittableView brakeSystemView = UncertaintyTestUtil.getDefaultView(vsum, List.of(Brakesystem.class))
+				.withChangeRecordingTrait();
+		modifyView(brakeSystemView, (CommittableView v) -> {
+			var brakeCaliper = BrakesystemFactory.eINSTANCE.createBrakeCaliper();
+			brakeCaliper.setPistonDiameterInMM(50);
+			brakeCaliper.setHydraulicPressureInBar(80);
+			v.getRootObjects(Brakesystem.class).iterator().next().getBrakeComponents().add(brakeCaliper);
+		});
+
+		// ARRANGE + ACT
+		// Add uncertainty to the pistonDiameterInMM and hydraulicPressureInBar
+		modifyView(UncertaintyTestUtil.getDefaultView(vsum,
+				List.of(UncertaintyAnnotationRepository.class, Brakesystem.class))
+				.withChangeRecordingTrait(),
+				(CommittableView v) -> {
+					BrakeCaliper brakeCaliper = v.getRootObjects(Brakesystem.class).iterator()
+							.next()
+							.getBrakeComponents()
+							.stream()
+							.filter(BrakeCaliper.class::isInstance)
+							.map(BrakeCaliper.class::cast)
+							.filter(d -> d.getPistonDiameterInMM() == 50
+									&& d.getHydraulicPressureInBar() == 80)
+							.findFirst().orElseThrow();
+
+					UncertaintyLocation pistonLocation = UncertaintyFactory.eINSTANCE
+							.createUncertaintyLocation();
+					pistonLocation.setLocation(UncertaintyLocationType.PARAMETER);
+					pistonLocation.setParameterLocation(
+							brakeCaliper.eClass().getEStructuralFeature("pistonDiameterInMM"));
+					pistonLocation.getReferencedComponents().add(brakeCaliper);
+
+					Uncertainty pistonUncertainty = UncertaintyTestFactory
+							.createUncertainty(Optional.of(pistonLocation));
+					pistonUncertainty.setKind(UncertaintyKind.MEASUREMENT_UNCERTAINTY);
+
+					// Trigger propagation
+					brakeCaliper.setSpecificationType("propagationTest");
+
+					v.getRootObjects(UncertaintyAnnotationRepository.class).iterator().next()
+							.getUncertainties().add(pistonUncertainty);
+
+				});
+
+		// ASSERT
+		// Check that the EStructuralFeature for clampingForceInN was found
+		Assertions.assertTrue(assertView(UncertaintyTestUtil.getDefaultView(vsum,
+				List.of(UncertaintyAnnotationRepository.class)), (View view) -> {
+					Uncertainty clampingForceUncertainty = view
+							.getRootObjects(UncertaintyAnnotationRepository.class)
+							.iterator().next()
+							.getUncertainties().stream()
+							.filter(u -> u.getUncertaintyLocation()
+									.getReferencedComponents().stream()
+									.anyMatch(c -> c instanceof BrakeCaliper))
+							.filter(u -> u.getUncertaintyLocation()
+									.getLocation() == UncertaintyLocationType.PARAMETER)
+							.findFirst().orElseThrow();
+
+					Assertions.assertEquals(
+							clampingForceUncertainty.getUncertaintyLocation().getParameterLocation(),
+							BrakesystemFactory.eINSTANCE.createBrakeCaliper()
+									.eClass().getEStructuralFeature("clampingForceInN"));
+					return true;
+				}));
+
 	}
 
 	@Test
@@ -85,8 +160,8 @@ public class ClampingForceUncertaintyTest {
 							.createUncertaintyLocation();
 					pistonLocation.setLocation(UncertaintyLocationType.PARAMETER);
 					pistonLocation.setSpecification("pistonDiameterInMM");
-					pistonLocation.setParameter(
-							brakeCaliper.eClass().getEStructuralFeature("pistonDiameterInMM"));
+					// pistonLocation.setParameter(
+					// brakeCaliper.eClass().getEStructuralFeature("pistonDiameterInMM"));
 					pistonLocation.getReferencedComponents().add(brakeCaliper);
 
 					UncertaintyLocation pressureLocation = UncertaintyFactory.eINSTANCE
