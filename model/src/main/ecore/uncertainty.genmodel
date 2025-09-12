@@ -90,6 +90,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uncertainty.ecore#//UncertaintyLocation/referencedComponents"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uncertainty.ecore#//UncertaintyLocation/location"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uncertainty.ecore#//UncertaintyLocation/specification"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uncertainty.ecore#//UncertaintyLocation/parameter"/>
     </genClasses>
     <genClasses ecoreClass="uncertainty.ecore#//Effect">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uncertainty.ecore#//Effect/representation"/>

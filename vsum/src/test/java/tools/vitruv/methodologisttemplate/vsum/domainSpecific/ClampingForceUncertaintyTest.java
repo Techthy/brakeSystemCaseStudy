@@ -46,7 +46,6 @@ public class ClampingForceUncertaintyTest {
 	static void setup() {
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("*",
 				new XMIResourceFactoryImpl());
-
 	}
 
 	@Test
@@ -86,6 +85,8 @@ public class ClampingForceUncertaintyTest {
 							.createUncertaintyLocation();
 					pistonLocation.setLocation(UncertaintyLocationType.PARAMETER);
 					pistonLocation.setSpecification("pistonDiameterInMM");
+					pistonLocation.setParameter(
+							brakeCaliper.eClass().getEStructuralFeature("pistonDiameterInMM"));
 					pistonLocation.getReferencedComponents().add(brakeCaliper);
 
 					UncertaintyLocation pressureLocation = UncertaintyFactory.eINSTANCE
