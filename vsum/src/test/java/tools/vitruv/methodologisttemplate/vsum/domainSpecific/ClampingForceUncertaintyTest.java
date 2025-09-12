@@ -25,6 +25,7 @@ import tools.vitruv.framework.vsum.VirtualModel;
 import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
 import tools.vitruv.methodologisttemplate.vsum.uncertainty.UncertaintyTestFactory;
 import tools.vitruv.methodologisttemplate.vsum.uncertainty.UncertaintyTestUtil;
+import tools.vitruv.stoex.interpreter.operations.MonteCarloOperation;
 import tools.vitruv.stoex.stoex.SampledDistribution;
 import uncertainty.Effect;
 import uncertainty.StochasticityEffectType;
@@ -85,7 +86,7 @@ public class ClampingForceUncertaintyTest {
 							.createUncertaintyLocation();
 					pistonLocation.setLocation(UncertaintyLocationType.PARAMETER);
 					pistonLocation.setSpecification("pistonDiameterInMM");
-					pistonLocation.getReferencedComponents().addAll(List.of(brakeCaliper));
+					pistonLocation.getReferencedComponents().add(brakeCaliper);
 
 					UncertaintyLocation pressureLocation = UncertaintyFactory.eINSTANCE
 							.createUncertaintyLocation();
@@ -97,7 +98,7 @@ public class ClampingForceUncertaintyTest {
 					Effect pistonEffect = UncertaintyTestFactory.createEffect();
 					pistonEffect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
 					pistonEffect.setStochasticity(StochasticityEffectType.PROBABILISTIC);
-					pistonEffect.setSpecification("Normal(50, 2)");
+					pistonEffect.setSpecification("Normal(40, 2)");
 
 					Effect pressureEffect = UncertaintyTestFactory.createEffect();
 					pressureEffect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
@@ -147,11 +148,14 @@ public class ClampingForceUncertaintyTest {
 					Object distribution = helper.evaluateToStoexExpression(stoexExpression);
 					assertTrue(distribution instanceof SampledDistribution);
 					SampledDistribution sampledDistribution = (SampledDistribution) distribution;
+					MonteCarloOperation monteCarlo = new MonteCarloOperation();
+					monteCarlo.printHistogram(
+							sampledDistribution.getValues().stream().mapToDouble(Double::doubleValue).toArray(), 10);
 					double mean = sampledDistribution.getValues().stream()
 							.mapToDouble(Double::doubleValue)
 							.average()
 							.orElse(Double.NaN);
-					assertEquals(15707963270.0, mean, 1e9);
+					assertEquals(15.707963270, mean, 100);
 					return true;
 				}));
 

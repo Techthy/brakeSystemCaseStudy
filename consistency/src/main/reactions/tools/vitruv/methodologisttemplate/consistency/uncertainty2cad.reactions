@@ -66,6 +66,4 @@ routine handleBrakeDiskUncertainty(uncertaintyModel::Effect effect, uncertaintyM
             correspondingUncertainty.effect.specification = result;
         } 
     }
-
-
 }

@@ -75,7 +75,7 @@ routine handleBrakeCaliperUncertainty(uncertaintyModel::Effect effect, uncertain
 
         stoexConsistencyHelper.putVariable("pistonDiameterInMM", pistonDiameterEffectSpec);
         stoexConsistencyHelper.putVariable("hydraulicPressureInBar", hydraulicPressureEffectSpec);
-        val expression = "PI * (pistonDiameterInMM / 2) ^ 2 * hydraulicPressureInBar * 10 ^ 5"
+        val expression = "PI * (pistonDiameterInMM * 0.001 / 2) ^ 2 * hydraulicPressureInBar * 10 ^ 2"
         val clampingForce = stoexConsistencyHelper.evaluateExpression(expression);
         
         //
