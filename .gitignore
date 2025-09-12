@@ -10,3 +10,12 @@ target/
 META-INF
 build.properties
 plugin.properties
+.project
+org.eclipse.*
+.classpath
+
+
+consistency/.settings/tools.vitruv.dsls.reactions.ReactionsLanguage.prefs
+
+
+.Zone.Identifier
