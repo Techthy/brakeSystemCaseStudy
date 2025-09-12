@@ -30,6 +30,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/brakeDiskThickness"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/hydraulicPressureInBar"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/clampingForceInN"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeCaliper/bridgeGap"/>
     </genClasses>
     <genClasses ecoreClass="brakesystem.ecore#//BrakeHose">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute brakesystem.ecore#//BrakeHose/threadSize1"/>

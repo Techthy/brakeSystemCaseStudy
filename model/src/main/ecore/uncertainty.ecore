@@ -24,9 +24,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//UncertaintySource"
         containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="ecore:EClass  platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.ecore#//Expression"
-        containment="true"/>
-        
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="UncertaintyKind">
     <eLiterals name="BeliefUncertainty" value="1"/>
@@ -61,12 +58,14 @@
         eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="location" eType="#//UncertaintyLocationType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="specification" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterLocation" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterLocation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Effect">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="representation" eType="#//StructuralEffectTypeRepresentation"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="stochasticity" eType="#//StochasticityEffectType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="specification" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="ecore:EClass  platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.ecore#//Expression"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="OnDeleteMode">
     <eLiterals name="NO_ACTION"/>

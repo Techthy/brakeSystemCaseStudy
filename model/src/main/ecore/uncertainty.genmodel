@@ -5,7 +5,7 @@
     creationIcons="false" editDirectory="/uncertainty.edit/src-gen" editorDirectory="/uncertainty.editor/src-gen"
     modelPluginID="uncertainty" modelName="Uncertainty" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     codeFormatting="true" importerID="org.eclipse.emf.importer.ecore" complianceLevel="23.0"
-    copyrightFields="false" operationReflection="true" importOrganizing="true" usedGenPackages="platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.genmodel#//stoex">
+    copyrightFields="false" operationReflection="true" importOrganizing="true">
   <foreignModel>uncertainty.ecore</foreignModel>
   <testsDirectory xsi:nil="true"/>
   <genPackages prefix="Uncertainty" disposableProviderFactory="true" ecorePackage="uncertainty.ecore#/">
@@ -90,7 +90,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uncertainty.ecore#//UncertaintyLocation/referencedComponents"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uncertainty.ecore#//UncertaintyLocation/location"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uncertainty.ecore#//UncertaintyLocation/specification"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uncertainty.ecore#//UncertaintyLocation/parameterLocation"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute uncertainty.ecore#//UncertaintyLocation/parameterLocation"/>
     </genClasses>
     <genClasses ecoreClass="uncertainty.ecore#//Effect">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uncertainty.ecore#//Effect/representation"/>

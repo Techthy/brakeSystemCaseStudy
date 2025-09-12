@@ -1,5 +1,7 @@
 
 import java.io.File;
+import tools.vitruv.methodologisttemplate.consistency.utils.ReactionsHelper;
+import cad.CADRepository;
 
 import "http://www.example.org/brakesystem" as brakesystemModel
 import "http://www.example.org/cad" as cadModel
@@ -43,5 +45,59 @@ routine createAndInsertBrakeDisc(cadModel::CADRepository repo, cadModel::Circle 
         mBrakeDisk.setDiameterInMM(circle.getRadius() * 2)
         mBrakesystem.brakeComponents.add(mBrakeDisk)
         addCorrespondenceBetween(mBrakeDisk, circle)
+    }
+}
+
+reaction CShapeInsertedIntoCADRepository {
+    after element cadModel::CShape inserted in cadModel::CADRepository[cadElements]
+    call createBrakeCaliper(affectedEObject, newValue)
+}
+
+routine createBrakeCaliper(cadModel::CADRepository repo, cadModel::CShape cshape) {
+    match {
+        require absence of brakesystemModel::BrakeCaliper corresponding to cshape
+        val mBrakesystem = retrieve brakesystemModel::Brakesystem corresponding to repo
+    }
+    update {
+        val mBrakeCaliper = ReactionsHelper.createNewBrakeCaliper(cshape);
+        mBrakesystem.brakeComponents.add(mBrakeCaliper)
+        addCorrespondenceBetween(mBrakeCaliper, cshape)
+    }
+} 
+
+reaction CircleThicknessChanged {
+    after attribute replaced at cadModel::Circle[extrusion] 
+    call {
+        updateBrakeDiskThickness(affectedEObject)
+        updateBridgeGap(newValue, oldValue, affectedEObject.eContainer() as CADRepository)
+    }
+}
+
+routine updateBrakeDiskThickness(cadModel::Circle circle) {
+    match {
+        val mBrakeDisk = retrieve brakesystemModel::BrakeDisk corresponding to circle
+    }
+    update {
+        mBrakeDisk.setBrakeDiskThicknessInMM(circle.getExtrusion())
+    }
+}
+
+routine updateBridgeGap(Integer newValue, Integer oldValue, cadModel::CADRepository repo) {
+    update {
+        ReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, repo);
+    }
+}
+
+reaction ThroatWidthChanged {
+    after attribute replaced at cadModel::CShape[throatWidth] 
+    call updateBrakeCaliperThroatWidth(affectedEObject)
+}
+
+routine updateBrakeCaliperThroatWidth(cadModel::CShape cshape) {
+    match {
+        val mBrakeCaliper = retrieve brakesystemModel::BrakeCaliper corresponding to cshape
+    }
+    update {
+        mBrakeCaliper.setBridgeGap(cshape.getThroatWidth())
     }
 }
