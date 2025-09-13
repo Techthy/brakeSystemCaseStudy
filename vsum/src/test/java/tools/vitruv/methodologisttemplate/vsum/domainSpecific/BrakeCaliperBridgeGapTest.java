@@ -205,6 +205,12 @@ public class BrakeCaliperBridgeGapTest {
                 List.of(Brakesystem.class, UncertaintyAnnotationRepository.class))
                 .withChangeRecordingTrait();
         modifyView(brakeSysCommittableView, this::changeBrakeDiskThicknessWithUncertaintyAndStoEx);
+        /* Let the uncertainty propagate -> corresponding uncertainties are present */
+        /* Now add a StoEx annotation to the uncertainty of the brake disk thickness */
+        CommittableView brakeSysCommittableViewWithUncertainties = UncertaintyTestUtil.getDefaultView(vsum,
+                List.of(Brakesystem.class, UncertaintyAnnotationRepository.class))
+                .withChangeRecordingTrait();
+        modifyView(brakeSysCommittableViewWithUncertainties, this::addStoexAnnotationToBrakeDisk);
 
         /**
          * Assert that the throat width was automatically recalculated
@@ -233,17 +239,21 @@ public class BrakeCaliperBridgeGapTest {
                 List.of(Brakesystem.class, CADRepository.class, UncertaintyAnnotationRepository.class));
         Uncertainty brakeDiskThicknessUncertainty = getBrakeDiskThicknessUncertainty(uncertaintyView);
         assertEquals(UncertaintyKind.MEASUREMENT_UNCERTAINTY, brakeDiskThicknessUncertainty.getKind());
+        // Check that the first propagation (to the brake Circle has the correct StoEx)
         Uncertainty circleExtrusionUncertainty = getCircleExtrusionUncertainty(uncertaintyView);
         assertEquals(UncertaintyKind.MEASUREMENT_UNCERTAINTY, circleExtrusionUncertainty.getKind());
         assertEquals(20, ((NormalDistribution) circleExtrusionUncertainty.getEffect().getExpression()).getMu());
-        assertEquals(0.667, ((NormalDistribution) circleExtrusionUncertainty.getEffect().getExpression()).getSigma());
+        assertEquals(0.667, ((NormalDistribution) circleExtrusionUncertainty.getEffect().getExpression())
+                .getSigma());
         Uncertainty cShapeThroatWidthUncertainty = getCShapeThroatWidthUncertainty(uncertaintyView);
         assertEquals(UncertaintyKind.MEASUREMENT_UNCERTAINTY, cShapeThroatWidthUncertainty.getKind());
         // Now check that the expression is correct
         // It should be a StoEx expression representing the following formula:
         // throatWidth + (20 - 10)
-        assertEquals(52, ((NormalDistribution) cShapeThroatWidthUncertainty.getEffect().getExpression()).getMu());
-        assertEquals(0.667, ((NormalDistribution) cShapeThroatWidthUncertainty.getEffect().getExpression()).getSigma());
+        assertEquals(52, ((NormalDistribution) cShapeThroatWidthUncertainty.getEffect().getExpression())
+                .getMu());
+        assertEquals(0.667, ((NormalDistribution) cShapeThroatWidthUncertainty.getEffect().getExpression())
+                .getSigma());
     }
 
     // Helper functions to get the relevant elements from the views
@@ -296,25 +306,36 @@ public class BrakeCaliperBridgeGapTest {
     }
 
     private void changeBrakeDiskThicknessWithUncertaintyAndStoEx(CommittableView view) {
-        int expectedThickness = 20;
+        // int expectedThickness = 20;
         BrakeDisk brakeDisk = view.getRootObjects(Brakesystem.class).iterator().next().getBrakeComponents()
                 .stream()
                 .filter(BrakeDisk.class::isInstance)
                 .map(BrakeDisk.class::cast)
                 .findFirst().orElseThrow();
-        brakeDisk.setBrakeDiskThicknessInMM(expectedThickness);
+        // brakeDisk.setBrakeDiskThicknessInMM(expectedThickness);
 
         // Create uncertainty for the brake disk thickness
         UncertaintyLocation location = UncertaintyTestFactory.createUncertaintyLocation(
                 List.of(brakeDisk), UncertaintyLocationType.PARAMETER, "brakeDiskThicknessInMM");
         Uncertainty uncertainty = UncertaintyTestFactory.createUncertainty(Optional.of(location));
         uncertainty.setKind(UncertaintyKind.MEASUREMENT_UNCERTAINTY);
-        NormalDistribution normalDist = StoexFactory.eINSTANCE.createNormalDistribution();
-        normalDist.setMu(expectedThickness);
-        normalDist.setSigma(0.667);
-        uncertainty.getEffect().setExpression(normalDist);
         view.getRootObjects(UncertaintyAnnotationRepository.class).iterator().next()
                 .getUncertainties().add(uncertainty);
+    }
+
+    private void addStoexAnnotationToBrakeDisk(CommittableView view) {
+        BrakeDisk brakeDisk = view.getRootObjects(Brakesystem.class).iterator().next().getBrakeComponents()
+                .stream()
+                .filter(BrakeDisk.class::isInstance)
+                .map(BrakeDisk.class::cast)
+                .findFirst().orElseThrow();
+        brakeDisk.setBrakeDiskThicknessInMM(20);
+
+        Uncertainty brakeDiskUncertainty = getBrakeDiskThicknessUncertainty(view);
+        NormalDistribution normalDist = StoexFactory.eINSTANCE.createNormalDistribution();
+        normalDist.setMu(20);
+        normalDist.setSigma(0.667);
+        brakeDiskUncertainty.getEffect().setExpression(normalDist);
     }
 
     private Uncertainty getBrakeDiskThicknessUncertainty(View view) {
@@ -346,7 +367,9 @@ public class BrakeCaliperBridgeGapTest {
                 .getUncertainties().stream()
                 .filter(u -> u.getUncertaintyLocation()
                         .getLocation() == UncertaintyLocationType.PARAMETER
-                        && u.getUncertaintyLocation().getParameterLocation().equals("throatWidth")
+                        && u.getUncertaintyLocation().getParameterLocation() != null
+                        && u.getUncertaintyLocation().getParameterLocation()
+                                .equals("throatWidth")
                         && u.getUncertaintyLocation().getReferencedComponents().stream()
                                 .anyMatch(e -> e instanceof CShape))
                 .findFirst().orElseThrow();

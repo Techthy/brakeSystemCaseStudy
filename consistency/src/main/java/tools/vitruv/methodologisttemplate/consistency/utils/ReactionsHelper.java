@@ -10,6 +10,7 @@ import cad.CADRepository;
 import cad.CShape;
 import cad.Circle;
 import tools.vitruv.stoex.stoex.Expression;
+import tools.vitruv.stoex.stoex.NormalDistribution;
 import uncertainty.Effect;
 import uncertainty.Pattern;
 import uncertainty.Uncertainty;
@@ -68,23 +69,19 @@ public class ReactionsHelper {
             uncertainty.getUncertaintyLocation().setParameterLocation("throatWidth");
 
             Expression circleExpression = circleUncertainty.getEffect().getExpression();
-            System.out.println("Circle expression: " + circleExpression);
             StoexConsistencyHelper stoexHelper = new StoexConsistencyHelper();
 
             stoexHelper.putVariable("newValue", circleExpression);
             stoexHelper.putVariable("oldValue", oldValue);
             stoexHelper.putVariable("throatWidth", cShape.getThroatWidth());
-            // Expression newThroatWidthExpression = (Expression) stoexHelper
-            // .evaluateToStoexExpression("throatWidth + newValue - oldValue");
-            // // For now assume the result to be a normal distribution
-            // if (newThroatWidthExpression instanceof NormalDistribution deltaNormal) {
-            // cShape.setThroatWidth((int) deltaNormal.getMu());
-            // }
+            Expression newThroatWidthExpression = (Expression) stoexHelper
+                    .evaluateToStoexExpression("throatWidth + newValue - oldValue");
+            // For now assume the result to be a normal distribution
+            if (newThroatWidthExpression instanceof NormalDistribution deltaNormal) {
+                cShape.setThroatWidth((int) deltaNormal.getMu());
+            }
 
-            // System.out.println("Updated CShape throatWidth to " + cShape.getThroatWidth()
-            // + " with uncertainty expression: " + newThroatWidthExpression);
-
-            // uncertainty.getEffect().setExpression(newThroatWidthExpression);
+            uncertainty.getEffect().setExpression(newThroatWidthExpression);
             uncertaintyRepo.getUncertainties().add(uncertainty);
 
         } else {

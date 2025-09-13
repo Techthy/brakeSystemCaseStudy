@@ -45,11 +45,13 @@ routine handleBrakeThicknessUncertainty(uncertaintyModel::Effect effect, uncerta
     }
     // Check if uncertainty qualifies
     update{
+        System.out.println("+++++++++++ Handling change of brake disk uncertainty " + uncertainty + " with effect " + effect);
         if (effect === null) return;
         if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
         if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
         if (!uncertainty.getUncertaintyLocation().getParameterLocation().equals("brakeDiskThicknessInMM")) return;
         if (effect.getExpression() === null) return;
+        System.out.println("+++++++++++ Effect expression is " + effect.getExpression() + "correspodonding uncertainties: " + correspondingUncertainties);
 
         for (correspondingUncertainty : correspondingUncertainties) {
             System.out.println("+++++++++++ Updating corresponding uncertainty " + correspondingUncertainty + " with new expression " + effect.getExpression());
