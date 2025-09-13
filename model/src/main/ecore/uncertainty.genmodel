@@ -5,7 +5,8 @@
     creationIcons="false" editDirectory="/uncertainty.edit/src-gen" editorDirectory="/uncertainty.editor/src-gen"
     modelPluginID="uncertainty" modelName="Uncertainty" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     codeFormatting="true" importerID="org.eclipse.emf.importer.ecore" complianceLevel="23.0"
-    copyrightFields="false" operationReflection="true" importOrganizing="true">
+    copyrightFields="false" operationReflection="true" importOrganizing="true"
+    usedGenPackages="platform:/plugin/tools.vitruv.stoex/model/generated/Stoex.genmodel#//stoex">
   <foreignModel>uncertainty.ecore</foreignModel>
   <testsDirectory xsi:nil="true"/>
   <genPackages prefix="Uncertainty" disposableProviderFactory="true" ecorePackage="uncertainty.ecore#/">
