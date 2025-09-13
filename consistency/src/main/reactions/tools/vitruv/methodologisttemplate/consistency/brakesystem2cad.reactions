@@ -66,3 +66,17 @@ routine createAndInsertRectangle(brakesystem::Brakesystem system, brakesystem::B
         addCorrespondenceBetween(pad, mCad)
     }
 }
+
+reaction BrakeDiskThicknessChanged {
+    after attribute replaced at  brakesystem::BrakeDisk[brakeDiskThicknessInMM] 
+    call updateCircleThickness(affectedEObject, newValue)
+}
+
+routine updateCircleThickness(brakesystem::BrakeDisk disc, Integer newThickness) {
+    match {
+        val mCad = retrieve cad::Circle corresponding to disc
+    }
+    update {
+        mCad.setExtrusion(newThickness);
+    }
+}

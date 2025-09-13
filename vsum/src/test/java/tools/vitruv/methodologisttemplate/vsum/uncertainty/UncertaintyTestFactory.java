@@ -43,6 +43,16 @@ public class UncertaintyTestFactory {
 		return location;
 	}
 
+	public static UncertaintyLocation createUncertaintyLocation(List<EObject> referencedComponents,
+			UncertaintyLocationType locationtype, String parameterLocation) {
+		UncertaintyLocation location = UncertaintyFactory.eINSTANCE.createUncertaintyLocation();
+		location.setLocation(locationtype);
+		location.setSpecification("Location specification");
+		location.setParameterLocation(parameterLocation);
+		location.getReferencedComponents().addAll(referencedComponents);
+		return location;
+	}
+
 	public static Effect createEffect() {
 		Effect effect = UncertaintyFactory.eINSTANCE.createEffect();
 		effect.setRepresentation(StructuralEffectTypeRepresentation.CONTINOUS);
