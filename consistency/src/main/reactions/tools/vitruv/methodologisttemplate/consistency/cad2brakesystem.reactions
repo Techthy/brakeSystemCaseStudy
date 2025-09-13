@@ -69,7 +69,7 @@ reaction CircleThicknessChanged {
     after attribute replaced at cadModel::Circle[extrusion] 
     call {
         updateBrakeDiskThickness(affectedEObject)
-        updateBridgeGap(newValue, oldValue, affectedEObject.eContainer() as CADRepository)
+        updateBridgeGap(newValue, oldValue, affectedEObject)
     }
 }
 
@@ -82,9 +82,9 @@ routine updateBrakeDiskThickness(cadModel::Circle circle) {
     }
 }
 
-routine updateBridgeGap(Integer newValue, Integer oldValue, cadModel::CADRepository repo) {
+routine updateBridgeGap(Integer newValue, Integer oldValue, cadModel::Circle affectedEObject) {
     update {
-        ReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, repo);
+        ReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, affectedEObject);
     }
 }
 

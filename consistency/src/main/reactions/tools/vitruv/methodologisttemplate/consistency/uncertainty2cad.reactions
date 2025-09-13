@@ -13,6 +13,9 @@ import uncertainty.UncertaintyKind;
 import cad.Circle;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import tools.vitruv.stoex.stoex.Expression;
+
+
 
 import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
 
@@ -20,6 +23,7 @@ import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelp
 import "http://www.example.org/uncertainty" as uncertaintyModel
 import "http://www.example.org/cad" as cadModel
 import "http://www.example.org/brakesystem" as brakesystemModel
+import "http://vitruv.tools/stoex/Stoex" as stoexModel
 
 
 
@@ -28,6 +32,32 @@ in reaction to changes in uncertaintyModel
 execute actions in cadModel
 
 
+reaction UncertaintyEffectExpressionChanged {
+    after element stoexModel::Expression replaced at uncertaintyModel::Effect[expression] 
+    call handleBrakeThicknessUncertainty(affectedEObject, affectedEObject.eContainer() as Uncertainty)
+}
+
+routine handleBrakeThicknessUncertainty(uncertaintyModel::Effect effect, uncertaintyModel::Uncertainty uncertainty) {
+
+    match {
+        val correspondingUncertainties = retrieve many uncertaintyModel::Uncertainty corresponding to uncertainty
+        check uncertainty.uncertaintyLocation.getReferencedComponents().get(0) instanceof BrakeDisk
+    }
+    // Check if uncertainty qualifies
+    update{
+        if (effect === null) return;
+        if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
+        if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
+        if (!uncertainty.getUncertaintyLocation().getParameterLocation().equals("brakeDiskThicknessInMM")) return;
+        if (effect.getExpression() === null) return;
+
+        for (correspondingUncertainty : correspondingUncertainties) {
+            System.out.println("+++++++++++ Updating corresponding uncertainty " + correspondingUncertainty + " with new expression " + effect.getExpression());
+            correspondingUncertainty.effect.setExpression(effect.getExpression());
+        }
+    }
+
+}
 
 
 reaction UncertaintyEffectSpecificationReferencingBrakeDiskChanged {

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tools.vitruv.stoex.interpreter.StoexEvaluator;
-import tools.vitruv.stoex.interpreter.operations.AddOperation;
-import tools.vitruv.stoex.stoex.Expression;
 
 /**
  * Utility class for using Stoex expressions in consistency transformations.
@@ -27,11 +25,6 @@ public class StoexConsistencyHelper {
         variables.put(name, value);
     }
 
-    public Object computeAdditionExpression(Expression left, Expression right) {
-        AddOperation op = new AddOperation();
-        return op.evaluate(left, right);
-    }
-
     /**
      * Evaluates a stoex expression with the given variables.
      * 
@@ -45,6 +38,10 @@ public class StoexConsistencyHelper {
 
     public Object evaluateToStoexExpression(String expression) {
         return stoexEvaluator.evaluate(expression, variables);
+    }
+
+    public String serializeToStoexExpression(Object expression) {
+        return stoexEvaluator.serialize(expression);
     }
 
 }
