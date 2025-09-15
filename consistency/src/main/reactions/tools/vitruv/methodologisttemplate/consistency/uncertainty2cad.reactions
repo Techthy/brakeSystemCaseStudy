@@ -32,6 +32,7 @@ in reaction to changes in uncertaintyModel
 execute actions in cadModel
 
 
+// TODO cleanup:
 reaction UncertaintyEffectExpressionChanged {
     after element stoexModel::Expression replaced at uncertaintyModel::Effect[expression] 
     call handleBrakeThicknessUncertainty(affectedEObject, affectedEObject.eContainer() as Uncertainty)

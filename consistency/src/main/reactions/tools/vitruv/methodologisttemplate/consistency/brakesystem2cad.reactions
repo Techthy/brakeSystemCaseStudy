@@ -1,8 +1,12 @@
 
 import java.io.File;
 
+import tools.vitruv.methodologisttemplate.consistency.utils.ClampingForceHelper;
+
+
 import "http://www.example.org/brakesystem" as brakesystem
 import "http://www.example.org/cad" as cad
+import "http://www.example.org/uncertainty" as uncertaintyModel
 
 reactions: brakesystem2cad
 in reaction to changes in brakesystem
@@ -78,5 +82,19 @@ routine updateCircleThickness(brakesystem::BrakeDisk disc, Integer newThickness)
     }
     update {
         mCad.setExtrusion(newThickness);
+    }
+}
+
+reaction PistonDiameterInMMChanged {
+    after attribute replaced at  brakesystem::BrakeCaliper[pistonDiameterInMM] 
+    call handlePistonDiameterChange(affectedEObject)
+}
+
+routine handlePistonDiameterChange(brakesystem::BrakeCaliper caliper) {
+    match {
+        val repo = retrieve uncertaintyModel::UncertaintyAnnotationRepository corresponding to caliper.eContainer()
+    }
+    update {
+        ClampingForceHelper.recomputeClampingForce(caliper, repo);
     }
 }

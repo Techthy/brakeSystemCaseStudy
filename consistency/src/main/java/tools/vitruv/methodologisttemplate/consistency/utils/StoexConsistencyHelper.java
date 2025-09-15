@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tools.vitruv.stoex.interpreter.StoexEvaluator;
+import tools.vitruv.stoex.stoex.DoubleLiteral;
 import tools.vitruv.stoex.stoex.Expression;
+import tools.vitruv.stoex.stoex.StoexFactory;
 
 /**
  * Utility class for using Stoex expressions in consistency transformations.
@@ -41,8 +43,18 @@ public class StoexConsistencyHelper {
         return stoexEvaluator.serialize(result);
     }
 
-    public Object evaluateToStoexExpression(String expression) {
-        return stoexEvaluator.evaluate(expression, variables);
+    public Expression evaluateToStoexExpression(String expressionString) {
+        Object result = stoexEvaluator.evaluate(expressionString, variables);
+        if (result instanceof Expression expression) {
+            return expression;
+        } else if (result instanceof Number number) {
+            DoubleLiteral literal = StoexFactory.eINSTANCE.createDoubleLiteral();
+            literal.setValue(number.doubleValue());
+            return literal;
+        } else {
+            throw new IllegalArgumentException("Expression did not evaluate to a valid Stoex Expression or Number.");
+        }
+
     }
 
     public String serializeToStoexExpression(Object expression) {
