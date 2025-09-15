@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.eclipse.emf.common.util.URI;
-
 import brakesystem.BrakeDisk;
 import brakesystem.Brakesystem;
 import brakesystem.BrakesystemFactory;
@@ -14,7 +12,6 @@ import cad.CADRepository;
 import cad.Circle;
 import mir.reactions.brakesystem2cad.Brakesystem2cadChangePropagationSpecification;
 import mir.reactions.cad2brakesystem.Cad2brakesystemChangePropagationSpecification;
-import mir.reactions.uncertainty2brakesystem.Uncertainty2brakesystemChangePropagationSpecification;
 import mir.reactions.uncertainty2cad.Uncertainty2cadChangePropagationSpecification;
 import mir.reactions.uncertainty2uncertainty.Uncertainty2uncertaintyChangePropagationSpecification;
 import tools.vitruv.change.propagation.ChangePropagationMode;
@@ -42,7 +39,6 @@ public class UncertaintyTestUtil {
 						new TestUserInteraction.ResultProvider(new TestUserInteraction()))
 				.withChangePropagationSpecification(new Brakesystem2cadChangePropagationSpecification())
 				.withChangePropagationSpecification(new Cad2brakesystemChangePropagationSpecification())
-				.withChangePropagationSpecification(new Uncertainty2brakesystemChangePropagationSpecification())
 				.withChangePropagationSpecification(new Uncertainty2cadChangePropagationSpecification())
 				.withChangePropagationSpecification(
 						new Uncertainty2uncertaintyChangePropagationSpecification())
