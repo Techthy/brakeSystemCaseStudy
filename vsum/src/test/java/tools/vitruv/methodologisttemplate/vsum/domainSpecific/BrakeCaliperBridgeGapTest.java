@@ -114,7 +114,7 @@ public class BrakeCaliperBridgeGapTest {
     }
 
     @Test
-    @DisplayName("Propagate Bridge Gap with Uncertainty but without StoEx")
+    @DisplayName("Propagate Bridge Gap with Uncertainty")
     void propagateBridgeGapWithUncertaintyButWithoutStoExTest(@TempDir Path tempDir) {
 
         // SETUP VSUM

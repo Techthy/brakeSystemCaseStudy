@@ -5,6 +5,7 @@ import cad.CADRepository;
 
 import "http://www.example.org/brakesystem" as brakesystemModel
 import "http://www.example.org/cad" as cadModel
+import "http://www.example.org/uncertainty" as uncertaintyModel
 
 reactions: cad2brakesystem
 in reaction to changes in cadModel
@@ -69,7 +70,7 @@ reaction CircleThicknessChanged {
     after attribute replaced at cadModel::Circle[extrusion] 
     call {
         updateBrakeDiskThickness(affectedEObject)
-        updateBridgeGap(newValue, oldValue, affectedEObject)
+        updateThroatWidth(newValue, oldValue, affectedEObject)
     }
 }
 
@@ -82,9 +83,12 @@ routine updateBrakeDiskThickness(cadModel::Circle circle) {
     }
 }
 
-routine updateBridgeGap(Integer newValue, Integer oldValue, cadModel::Circle affectedEObject) {
+routine updateThroatWidth(Integer newValue, Integer oldValue, cadModel::Circle affectedEObject) {
+    match {
+        val uncertaintyRepo = retrieve uncertaintyModel::UncertaintyAnnotationRepository corresponding to affectedEObject.eContainer()
+    }
     update {
-        ReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, affectedEObject);
+        ReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, affectedEObject, uncertaintyRepo);
     }
 }
 

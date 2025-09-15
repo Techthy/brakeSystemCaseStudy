@@ -1,8 +1,5 @@
 package tools.vitruv.methodologisttemplate.consistency.utils;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import brakesystem.BrakeCaliper;
@@ -10,7 +7,6 @@ import cad.CADRepository;
 import cad.CShape;
 import cad.Circle;
 import tools.vitruv.stoex.stoex.Expression;
-import tools.vitruv.stoex.stoex.NormalDistribution;
 import uncertainty.Effect;
 import uncertainty.Pattern;
 import uncertainty.Uncertainty;
@@ -27,28 +23,38 @@ public class ReactionsHelper {
         return brakeCaliper;
     }
 
-    private static UncertaintyAnnotationRepository findUncertaintyRepository(CADRepository repo) {
-        UncertaintyAnnotationRepository uncertaintyRepo = null;
-        EList<Resource> eObjectList = repo.eResource().getResourceSet().getResources();
-        for (Resource resource : eObjectList) {
-            EObject eObject = resource.getContents().get(0);
-            if (eObject instanceof UncertaintyAnnotationRepository uncertaintyAnnotationRepository) {
-                uncertaintyRepo = uncertaintyAnnotationRepository;
-            }
+    public static void updateCShapeThroatWidth(Integer newValue, Integer oldValue, Circle circle,
+            UncertaintyAnnotationRepository uncertaintyRepo) {
+        // No update needed if oldValue is 0 (initial creation)
+        if (oldValue == 0) {
+            return;
         }
-        if (uncertaintyRepo == null) {
-            throw new IllegalStateException("No UncertaintyAnnotationRepository found in the resource set.");
+        CADRepository repo = (CADRepository) circle.eContainer();
+
+        // Find the CShape that is linked to the BrakeCaliper and update its
+        // throatWidth
+        // There should be exactly one such CShape (Assumption based on the case
+        // study)
+        CShape cShape = repo.getCadElements().stream().filter(e -> e instanceof CShape).map(e -> (CShape) e)
+                .filter(c -> c.getIdentifier().equals("BrakeCaliperCShape")).findFirst().orElseThrow();
+
+        if (handleCircleUncertainty(repo, circle, cShape, oldValue, uncertaintyRepo)) {
+            return;
         }
-        return uncertaintyRepo;
+        // No uncertainty involved, just update the throat width directly
+        int delta = newValue - oldValue;
+        cShape.setThroatWidth(cShape.getThroatWidth() + delta);
+
     }
 
-    public static boolean handleCircleUncertainty(CADRepository repo, Circle circle, CShape cShape, Integer oldValue) {
-        UncertaintyAnnotationRepository uncertaintyRepo = findUncertaintyRepository(repo);
+    public static boolean handleCircleUncertainty(CADRepository repo, Circle circle, CShape cShape, Integer oldValue,
+            UncertaintyAnnotationRepository uncertaintyRepo) {
         Uncertainty circleUncertainty = uncertaintyRepo.getUncertainties().stream()
                 .filter(u -> u.getUncertaintyLocation().getReferencedComponents().contains(circle))
                 .findFirst().orElse(null);
 
-        if (circleUncertainty != null && circleUncertainty.getEffect() != null
+        if (circleUncertainty != null
+                && circleUncertainty.getEffect() != null
                 && circleUncertainty.getEffect().getExpression() != null) {
             // create a new uncertainty for the throat width of the CShape
             // This is a simplification, in a real scenario we would need to consider the
@@ -65,10 +71,8 @@ public class ReactionsHelper {
             stoexHelper.putVariable("throatWidth", cShape.getThroatWidth());
             Expression newThroatWidthExpression = (Expression) stoexHelper
                     .evaluateToStoexExpression("throatWidth + newValue - oldValue");
-            // For now assume the result to be a normal distribution
-            if (newThroatWidthExpression instanceof NormalDistribution deltaNormal) {
-                cShape.setThroatWidth((int) deltaNormal.getMu());
-            }
+
+            cShape.setThroatWidth(stoexHelper.getMean(newThroatWidthExpression).intValue());
 
             uncertainty.getEffect().setExpression(newThroatWidthExpression);
             uncertaintyRepo.getUncertainties().add(uncertainty);
@@ -77,29 +81,6 @@ public class ReactionsHelper {
 
         }
         return false;
-    }
-
-    public static void updateCShapeThroatWidth(Integer newValue, Integer oldValue, Circle circle) {
-        // No update needed if oldValue is 0 (initial creation)
-        if (oldValue == 0) {
-            return;
-        }
-        CADRepository repo = (CADRepository) circle.eContainer();
-
-        // Find the CShape that is linked to the BrakeCaliper and update its
-        // throatWidth
-        // There should be exactly one such CShape (Assumption based on the case
-        // study)
-        CShape cShape = repo.getCadElements().stream().filter(e -> e instanceof CShape).map(e -> (CShape) e)
-                .filter(c -> c.getIdentifier().equals("BrakeCaliperCShape")).findFirst().orElseThrow();
-
-        if (handleCircleUncertainty(repo, circle, cShape, oldValue)) {
-            return;
-        }
-        // No uncertainty involved, just update the throat width directly
-        int delta = newValue - oldValue;
-        cShape.setThroatWidth(cShape.getThroatWidth() + delta);
-
     }
 
     private static Uncertainty copyUncertainty(Uncertainty original) {
