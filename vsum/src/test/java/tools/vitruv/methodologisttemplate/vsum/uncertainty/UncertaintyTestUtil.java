@@ -63,9 +63,9 @@ public class UncertaintyTestUtil {
 					org.eclipse.emf.common.util.URI
 							.createFileURI(filePath.toString() + "/uncertainty.model"));
 
-			v.registerRoot(
-					BrakesystemFactory.eINSTANCE.createBrakesystem(),
-					URI.createFileURI(filePath.toString() + "/brakesystem.model"));
+			// v.registerRoot(
+			// BrakesystemFactory.eINSTANCE.createBrakesystem(),
+			// URI.createFileURI(filePath.toString() + "/brakesystem.model"));
 		});
 
 	}

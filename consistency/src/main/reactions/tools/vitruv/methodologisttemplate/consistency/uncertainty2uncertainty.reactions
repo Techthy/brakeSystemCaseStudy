@@ -1,5 +1,7 @@
 
+import java.io.File;
 import java.util.List;
+
 import uncertainty.UncertaintyAnnotationRepository;
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyLocation;
@@ -9,11 +11,38 @@ import uncertainty.OnDeleteMode;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import "http://www.example.org/uncertainty" as uncertaintyModel
+import "http://www.example.org/brakesystem" as brakesystemModel
+import "http://www.example.org/cad" as cadModel
 
 
 reactions: uncertainty2uncertainty
 in reaction to changes in uncertaintyModel
 execute actions in uncertaintyModel
+
+reaction UncertaintyInsertedAsRoot {
+    after element uncertaintyModel::UncertaintyAnnotationRepository inserted as root
+    call createAndRegisterRoots(newValue)
+}
+
+
+routine createAndRegisterRoots(uncertaintyModel::UncertaintyAnnotationRepository repo) {
+    match {
+        require absence of brakesystemModel::Brakesystem corresponding to repo
+    }
+    create {
+        val mSystem = new brakesystemModel::Brakesystem
+        val mCADRepo = new cadModel::CADRepository
+    }
+    update {
+        persistProjectRelative(repo, mCADRepo, new File("").toString() + "example.cad")
+        addCorrespondenceBetween(repo, mCADRepo)
+        persistProjectRelative(repo, mSystem, new File("").toString() + "example.brakesystem")
+        addCorrespondenceBetween(repo, mSystem)
+        addCorrespondenceBetween(mSystem, mCADRepo)
+    }
+}
+
+
 
 reaction ReferenceInsertedIntoUncertaintyLocation {
     after element EObject inserted in uncertaintyModel::UncertaintyLocation[referencedComponents]
