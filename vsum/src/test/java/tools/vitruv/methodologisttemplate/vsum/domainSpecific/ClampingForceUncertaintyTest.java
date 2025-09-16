@@ -113,8 +113,8 @@ public class ClampingForceUncertaintyTest {
 		View brakeSystemAssertionView = UncertaintyTestUtil.getDefaultView(vsum,
 				List.of(Brakesystem.class));
 		BrakeCaliper brakeCaliper = getBrakeCaliperFromView(brakeSystemAssertionView);
-		// PI * (50 * 0.001/2)^2 * 80 * 10^2 = 15.707963270
-		assertEquals(15.707963270, brakeCaliper.getClampingForceInN(), 0.1);
+		// PI * (50 * 0.001/2)^2 * 78 * 10^2 = 15.31526419
+		assertEquals(15.31526419, brakeCaliper.getClampingForceInN(), 0.1);
 		View uncertaintyAssertionView = UncertaintyTestUtil.getDefaultView(vsum,
 				List.of(UncertaintyAnnotationRepository.class));
 		Uncertainty clampingForceUncertainty = uncertaintyAssertionView
@@ -131,8 +131,9 @@ public class ClampingForceUncertaintyTest {
 				.findFirst().orElseThrow();
 		StoexConsistencyHelper helper = new StoexConsistencyHelper();
 		Double mean = helper.getMean(clampingForceUncertainty.getEffect().getExpression()).doubleValue();
+		// PI * (50 * 0.001/2)^2 * 78 * 10^2 = 15.31526419
 		// Approximation error due to sampled distribution
-		assertEquals(15.707963270, mean, 0.1);
+		assertEquals(15.31526419, mean, 0.1);
 	}
 
 	private void createBrakeCaliper(CommittableView view) {
@@ -182,8 +183,11 @@ public class ClampingForceUncertaintyTest {
 		dist.setSigma(2);
 		pistonUncertainty.getEffect().setExpression(dist);
 
+		// Sampled distribution with mean 78
 		SampledDistribution sampledDist = StoexFactory.eINSTANCE.createSampledDistribution();
-		sampledDist.getValues().addAll(List.of(70.0, 90.0, 75.0, 85.0, 80.0));
+		sampledDist.getValues()
+				.addAll(List.of(60.0, 65.0, 70.0, 72.0, 74.0, 75.0, 76.0, 77.0, 78.0, 78.0, 78.0, 79.0, 80.0, 81.0,
+						82.0, 84.0, 85.0, 86.0, 88.0, 92.0));
 		Uncertainty pressureUncertainty = UncertaintyTestFactory.createUncertainty(Optional.of(pressureLocation));
 		pressureUncertainty.getEffect().setExpression(sampledDist);
 

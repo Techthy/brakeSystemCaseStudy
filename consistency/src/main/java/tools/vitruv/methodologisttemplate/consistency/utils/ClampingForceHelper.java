@@ -34,50 +34,44 @@ public class ClampingForceHelper {
     public static boolean handleUncertaintyClampingForce(BrakeCaliper caliper,
             UncertaintyAnnotationRepository uncertaintyRepo) {
 
-        List<Uncertainty> brakeCaliperUncertainties = uncertaintyRepo.getUncertainties().stream()
-                .filter(u -> u.getUncertaintyLocation().getReferencedComponents().contains(caliper)).toList();
+        List<Uncertainty> uncertainties = uncertaintyRepo.getUncertainties().stream()
+                .filter(u -> u.getUncertaintyLocation().getReferencedComponents().contains(caliper))
+                .toList();
 
-        if (!brakeCaliperUncertainties.isEmpty()) {
-            Expression pistonDiameterUncertainty = brakeCaliperUncertainties.stream()
-                    .filter(u -> u.getUncertaintyLocation().getLocation() == UncertaintyLocationType.PARAMETER
-                            && u.getUncertaintyLocation().getReferencedComponents().contains(caliper)
-                            && u.getUncertaintyLocation().getParameterLocation().equals("pistonDiameterInMM")
-                            && u.getEffect() != null && u.getEffect().getExpression() != null)
-                    .findFirst()
-                    .map(u -> u.getEffect().getExpression())
-                    .orElse(null);
-            Expression hydraulicPressureUncertainty = brakeCaliperUncertainties.stream()
-                    .filter(u -> u.getUncertaintyLocation().getLocation() == UncertaintyLocationType.PARAMETER
-                            && u.getUncertaintyLocation().getReferencedComponents().contains(caliper)
-                            && u.getUncertaintyLocation().getParameterLocation().equals("hydraulicPressureInBar")
-                            && u.getEffect() != null && u.getEffect().getExpression() != null)
-                    .findFirst()
-                    .map(u -> u.getEffect().getExpression())
-                    .orElse(null);
-
-            StoexConsistencyHelper stoexHelper = new StoexConsistencyHelper();
-            if (pistonDiameterUncertainty != null) {
-                stoexHelper.putVariable("d", pistonDiameterUncertainty);
-            } else {
-                stoexHelper.putVariable("d", caliper.getPistonDiameterInMM());
-            }
-            if (hydraulicPressureUncertainty != null) {
-                stoexHelper.putVariable("p", hydraulicPressureUncertainty);
-            } else {
-                stoexHelper.putVariable("p", caliper.getHydraulicPressureInBar());
-            }
-            String clampingForceExpression = "PI * ( (d * 0.001) / 2 ) ^ 2 * p * 10 ^ 2";
-            Expression result = stoexHelper.evaluateToStoexExpression(clampingForceExpression);
-            caliper.setClampingForceInN(stoexHelper.getMean(result).doubleValue());
-            Uncertainty clampingForceUncertainty = copyUncertainty(brakeCaliperUncertainties.get(0));
-            clampingForceUncertainty.getUncertaintyLocation().getReferencedComponents().add(caliper);
-            clampingForceUncertainty.getUncertaintyLocation().setParameterLocation("clampingForceInN");
-            clampingForceUncertainty.getEffect().setExpression(result);
-            uncertaintyRepo.getUncertainties().add(clampingForceUncertainty);
-            // store the expression as string for later evaluation
-            return true;
+        if (uncertainties.isEmpty()) {
+            return false;
         }
-        return false;
+
+        Expression pistonDiameterExpr = getParameterUncertainty(uncertainties, caliper, "pistonDiameterInMM");
+        Expression hydraulicPressureExpr = getParameterUncertainty(uncertainties, caliper, "hydraulicPressureInBar");
+
+        StoexConsistencyHelper stoexHelper = new StoexConsistencyHelper();
+        stoexHelper.putVariable("d", pistonDiameterExpr != null ? pistonDiameterExpr : caliper.getPistonDiameterInMM());
+        stoexHelper.putVariable("p",
+                hydraulicPressureExpr != null ? hydraulicPressureExpr : caliper.getHydraulicPressureInBar());
+
+        String expr = "PI * ( (d * 0.001) / 2 ) ^ 2 * p * 10 ^ 2";
+        Expression result = stoexHelper.evaluateToStoexExpression(expr);
+        caliper.setClampingForceInN(stoexHelper.getMean(result).doubleValue());
+
+        Uncertainty clampingForceUncertainty = copyUncertainty(uncertainties.get(0));
+        clampingForceUncertainty.getUncertaintyLocation().getReferencedComponents().add(caliper);
+        clampingForceUncertainty.getUncertaintyLocation().setParameterLocation("clampingForceInN");
+        clampingForceUncertainty.getEffect().setExpression(result);
+        uncertaintyRepo.getUncertainties().add(clampingForceUncertainty);
+
+        return true;
+    }
+
+    private static Expression getParameterUncertainty(List<Uncertainty> uncertainties, BrakeCaliper caliper,
+            String param) {
+        return uncertainties.stream()
+                .filter(u -> u.getUncertaintyLocation().getLocation() == UncertaintyLocationType.PARAMETER
+                        && u.getUncertaintyLocation().getParameterLocation().equals(param)
+                        && u.getEffect() != null && u.getEffect().getExpression() != null)
+                .map(u -> u.getEffect().getExpression())
+                .findFirst()
+                .orElse(null);
     }
 
     private static Uncertainty copyUncertainty(Uncertainty original) {
