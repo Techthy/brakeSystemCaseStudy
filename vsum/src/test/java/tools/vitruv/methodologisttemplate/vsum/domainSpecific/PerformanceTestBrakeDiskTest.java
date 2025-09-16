@@ -10,46 +10,68 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Performance test class to measure execution times of tests in
- * BrakeCaliperBridgeGapTest.
- * This class runs the individual test methods from BrakeCaliperBridgeGapTest
- * and measures
- * their execution times to analyze performance characteristics.
+ * BrakeCaliperBridgeGapTest and ClampingForceUncertaintyTest.
+ * This class runs the individual test methods from both test classes
+ * and measures their execution times to analyze performance characteristics.
  * 
  * @author Claus Hammann
  */
 public class PerformanceTestBrakeDiskTest {
 
-    private BrakeCaliperBridgeGapTest testInstance;
+    private BrakeCaliperBridgeGapTest bridgeGapTestInstance;
+    private ClampingForceUncertaintyTest clampingForceTestInstance;
 
     @Test
-    @DisplayName("Performance Test: Measure BrakeCaliperBridgeGap Test Execution Times")
+    @DisplayName("Performance Test: Measure BrakeCaliperBridgeGap and ClampingForce Test Execution Times")
     void measureBrakeCaliperBridgeGapTestPerformance(@TempDir Path tempDir) {
         // Initialize static resources needed for the tests
         BrakeCaliperBridgeGapTest.setup();
+        ClampingForceUncertaintyTest.setup();
 
-        testInstance = new BrakeCaliperBridgeGapTest();
+        bridgeGapTestInstance = new BrakeCaliperBridgeGapTest();
+        clampingForceTestInstance = new ClampingForceUncertaintyTest();
 
         List<TestResult> results = new ArrayList<>();
 
         // Test 1: Propagate Bridge Gap without Uncertainty
-        System.out.println("Running performance tests for BrakeCaliperBridgeGapTest...\n");
+        System.out.println(
+                "Running performance tests for BrakeCaliperBridgeGapTest and ClampingForceUncertaintyTest...\n");
 
         TestResult result1 = measureTestExecution(
                 "propagateBridgeGapTest",
-                () -> testInstance.propagateBridgeGapTest(tempDir.resolve("test1")));
+                () -> bridgeGapTestInstance.propagateBridgeGapTest(tempDir.resolve("test1")));
         results.add(result1);
 
         // Test 2: Propagate Bridge Gap with Uncertainty
         TestResult result2 = measureTestExecution(
                 "propagateBridgeGapWithUncertainty",
-                () -> testInstance.propagateBridgeGapWithUncertainty(tempDir.resolve("test2")));
+                () -> bridgeGapTestInstance.propagateBridgeGapWithUncertainty(tempDir.resolve("test2")));
         results.add(result2);
 
         // Test 3: Propagate Bridge Gap with Uncertainty and StoEx
         TestResult result3 = measureTestExecution(
                 "propagateBridgeGapWithUncertaintyAndStoExTest",
-                () -> testInstance.propagateBridgeGapWithUncertaintyAndStoExTest(tempDir.resolve("test3")));
+                () -> bridgeGapTestInstance.propagateBridgeGapWithUncertaintyAndStoExTest(tempDir.resolve("test3")));
         results.add(result3);
+
+        // Test 4: Derive Clamping Force
+        TestResult result4 = measureTestExecution(
+                "deriveClampingForceTest",
+                () -> clampingForceTestInstance.deriveClampingForceTest(tempDir.resolve("test4")));
+        results.add(result4);
+
+        // Test 5: Derive Clamping Force with Uncertainty
+        TestResult result5 = measureTestExecution(
+                "deriveClampingForceWithUncertaintyTest",
+                () -> clampingForceTestInstance.deriveClampingForceWithUncertaintyTest(tempDir.resolve("test5")));
+        results.add(result5);
+
+        // Test 6: Derive Clamping Force with Uncertainty and StoEx
+        TestResult result6 = measureTestExecution(
+                "deriveClampingForceWithUncertaintyAndStoexExpressionTest",
+                () -> clampingForceTestInstance
+                        .deriveClampingForceWithUncertaintyAndStoexExpressionTest(tempDir.resolve("test6")));
+        results.add(result6);
 
         // Print comprehensive results
         printPerformanceResults(results);
@@ -111,16 +133,30 @@ public class PerformanceTestBrakeDiskTest {
             // Run each test
             iterationResults.add(measureTestExecution(
                     "propagateBridgeGapTest",
-                    () -> testInstance.propagateBridgeGapTest(iterationTempDir.resolve("test1"))));
+                    () -> bridgeGapTestInstance.propagateBridgeGapTest(iterationTempDir.resolve("test1"))));
 
             iterationResults.add(measureTestExecution(
                     "propagateBridgeGapWithUncertainty",
-                    () -> testInstance.propagateBridgeGapWithUncertainty(iterationTempDir.resolve("test2"))));
+                    () -> bridgeGapTestInstance.propagateBridgeGapWithUncertainty(iterationTempDir.resolve("test2"))));
 
             iterationResults.add(measureTestExecution(
                     "propagateBridgeGapWithUncertaintyAndStoExTest",
-                    () -> testInstance
+                    () -> bridgeGapTestInstance
                             .propagateBridgeGapWithUncertaintyAndStoExTest(iterationTempDir.resolve("test3"))));
+
+            iterationResults.add(measureTestExecution(
+                    "deriveClampingForceTest",
+                    () -> clampingForceTestInstance.deriveClampingForceTest(iterationTempDir.resolve("test4"))));
+
+            iterationResults.add(measureTestExecution(
+                    "deriveClampingForceWithUncertaintyTest",
+                    () -> clampingForceTestInstance
+                            .deriveClampingForceWithUncertaintyTest(iterationTempDir.resolve("test5"))));
+
+            iterationResults.add(measureTestExecution(
+                    "deriveClampingForceWithUncertaintyAndStoexExpressionTest",
+                    () -> clampingForceTestInstance.deriveClampingForceWithUncertaintyAndStoexExpressionTest(
+                            iterationTempDir.resolve("test6"))));
 
             allResults.add(iterationResults);
             System.out.println();
@@ -163,7 +199,10 @@ public class PerformanceTestBrakeDiskTest {
         String[] testNames = {
                 "propagateBridgeGapTest",
                 "propagateBridgeGapWithUncertainty",
-                "propagateBridgeGapWithUncertaintyAndStoExTest"
+                "propagateBridgeGapWithUncertaintyAndStoExTest",
+                "deriveClampingForceTest",
+                "deriveClampingForceWithUncertaintyTest",
+                "deriveClampingForceWithUncertaintyAndStoexExpressionTest"
         };
 
         for (int testIndex = 0; testIndex < testNames.length; testIndex++) {
