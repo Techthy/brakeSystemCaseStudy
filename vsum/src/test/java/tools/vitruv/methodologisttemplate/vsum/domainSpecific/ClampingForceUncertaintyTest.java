@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.slf4j.Logger;
 
 import brakesystem.BrakeCaliper;
 import brakesystem.Brakesystem;
@@ -32,9 +31,6 @@ import uncertainty.UncertaintyLocation;
 import uncertainty.UncertaintyLocationType;
 
 public class ClampingForceUncertaintyTest {
-
-	private static final Logger logger = org.slf4j.LoggerFactory
-			.getLogger(BrakeDiskDiameterUncertaintyTest.class);
 
 	@BeforeAll
 	static void setup() {
