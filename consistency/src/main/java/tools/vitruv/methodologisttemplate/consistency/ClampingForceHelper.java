@@ -1,9 +1,9 @@
-package tools.vitruv.methodologisttemplate.consistency.utils;
+package tools.vitruv.methodologisttemplate.consistency;
 
 import java.util.List;
 
 import brakesystem.BrakeCaliper;
-import tools.vitruv.methodologisttemplate.consistency.UncertaintyReactionsHelper;
+import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
 import tools.vitruv.stoex.stoex.Expression;
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyAnnotationRepository;

@@ -1,21 +1,15 @@
-package tools.vitruv.methodologisttemplate.consistency.utils;
+package tools.vitruv.methodologisttemplate.consistency;
 
 import brakesystem.BrakeCaliper;
 import cad.CADRepository;
 import cad.CShape;
 import cad.Circle;
-import tools.vitruv.methodologisttemplate.consistency.UncertaintyReactionsHelper;
+import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
 import tools.vitruv.stoex.stoex.Expression;
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyAnnotationRepository;
 
-public class ReactionsHelper {
-
-    public static BrakeCaliper createNewBrakeCaliper(CShape cShape) {
-        BrakeCaliper brakeCaliper = brakesystem.BrakesystemFactory.eINSTANCE.createBrakeCaliper();
-        brakeCaliper.setBridgeGap(cShape.getThroatWidth());
-        return brakeCaliper;
-    }
+public class ThroatWidthReactionsHelper {
 
     public static void updateCShapeThroatWidth(Integer newValue, Integer oldValue, Circle circle,
             UncertaintyAnnotationRepository uncertaintyRepo) {
@@ -75,6 +69,12 @@ public class ReactionsHelper {
 
         }
         return false;
+    }
+
+    public static BrakeCaliper createNewBrakeCaliper(CShape cShape) {
+        BrakeCaliper brakeCaliper = brakesystem.BrakesystemFactory.eINSTANCE.createBrakeCaliper();
+        brakeCaliper.setBridgeGap(cShape.getThroatWidth());
+        return brakeCaliper;
     }
 
 }

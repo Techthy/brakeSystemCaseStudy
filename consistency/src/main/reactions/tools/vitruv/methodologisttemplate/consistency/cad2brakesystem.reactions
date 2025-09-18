@@ -1,6 +1,6 @@
 
 import java.io.File;
-import tools.vitruv.methodologisttemplate.consistency.utils.ReactionsHelper;
+import tools.vitruv.methodologisttemplate.consistency.ThroatWidthReactionsHelper;
 
 import "http://www.example.org/brakesystem" as brakesystemModel
 import "http://www.example.org/cad" as cadModel
@@ -59,7 +59,7 @@ routine createBrakeCaliper(cadModel::CADRepository repo, cadModel::CShape cshape
         val mBrakesystem = retrieve brakesystemModel::Brakesystem corresponding to repo
     }
     update {
-        val mBrakeCaliper = ReactionsHelper.createNewBrakeCaliper(cshape);
+        val mBrakeCaliper = ThroatWidthReactionsHelper.createNewBrakeCaliper(cshape);
         mBrakesystem.brakeComponents.add(mBrakeCaliper)
         addCorrespondenceBetween(mBrakeCaliper, cshape)
     }
@@ -87,7 +87,7 @@ routine updateThroatWidth(Integer newValue, Integer oldValue, cadModel::Circle a
         val uncertaintyRepo = retrieve uncertaintyModel::UncertaintyAnnotationRepository corresponding to affectedEObject.eContainer()
     }
     update {
-        ReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, affectedEObject, uncertaintyRepo);
+        ThroatWidthReactionsHelper.updateCShapeThroatWidth(newValue, oldValue, affectedEObject, uncertaintyRepo);
     }
 }
 
