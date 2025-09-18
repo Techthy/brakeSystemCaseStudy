@@ -32,7 +32,6 @@ in reaction to changes in uncertaintyModel
 execute actions in cadModel
 
 
-// TODO cleanup:
 reaction UncertaintyEffectExpressionChanged {
     after element stoexModel::Expression replaced at uncertaintyModel::Effect[expression] 
     call handleBrakeThicknessUncertainty(affectedEObject, affectedEObject.eContainer() as Uncertainty)
@@ -42,7 +41,8 @@ routine handleBrakeThicknessUncertainty(uncertaintyModel::Effect effect, uncerta
 
     match {
         val correspondingUncertainties = retrieve many uncertaintyModel::Uncertainty corresponding to uncertainty
-        check uncertainty.uncertaintyLocation.getReferencedComponents().get(0) instanceof BrakeDisk
+        check uncertainty.getUncertaintyLocation().getReferencedComponents().size() == 1
+        check uncertainty.getUncertaintyLocation().getReferencedComponents().get(0) instanceof BrakeDisk
     }
     // Check if uncertainty qualifies
     update{
@@ -60,40 +60,3 @@ routine handleBrakeThicknessUncertainty(uncertaintyModel::Effect effect, uncerta
 }
 
 
-reaction UncertaintyEffectSpecificationReferencingBrakeDiskChanged {
-    after attribute replaced at uncertaintyModel::Effect[specification] 
-    call handleBrakeDiskUncertainty(affectedEObject, affectedEObject.eContainer() as Uncertainty)
-}
-
-routine handleBrakeDiskUncertainty(uncertaintyModel::Effect effect, uncertaintyModel::Uncertainty uncertainty) {
-
-    match {
-        val correspondingUncertainties = retrieve many uncertaintyModel::Uncertainty corresponding to uncertainty
-        check uncertainty.uncertaintyLocation.getReferencedComponents().get(0) instanceof BrakeDisk
-    }
-
-
-    // Check if uncertainty qualifies
-    // needs to be a of kind belief
-    // the EffectTypes within the Effect shall include continuous and probabilistic		
-    update {
-        if (effect === null) return;
-        if (effect.stochasticity !== StochasticityEffectType.PROBABILISTIC) return;
-        if (effect.representation !== StructuralEffectTypeRepresentation.CONTINOUS) return;
-        if(effect.getSpecification() === null) return;
-
-
-        val stoexConsistencyHelper = new StoexConsistencyHelper();
-        stoexConsistencyHelper.putVariable("var1", "Normal(0.0, 4.0)");
-        stoexConsistencyHelper.putVariable("var2", effect.getSpecification());
-        val expression = "var1 + var2"
-        val result = stoexConsistencyHelper.evaluateExpression(expression);
-
-
-        // Update corresponding uncertainties with the calculated result
-        // TODO: do that possibly only for the component we want to be affected ...
-        for (correspondingUncertainty : correspondingUncertainties) {
-            correspondingUncertainty.effect.specification = result;
-        } 
-    }
-}
