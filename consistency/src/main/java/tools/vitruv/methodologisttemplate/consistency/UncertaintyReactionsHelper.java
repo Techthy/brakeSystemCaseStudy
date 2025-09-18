@@ -16,44 +16,54 @@ import uncertainty.UncertaintyPerspective;
 
 public class UncertaintyReactionsHelper {
 
-    public static List<Uncertainty> createUncertaintyForReferencedComponent(UncertaintyAnnotationRepository repo,
-            Iterable<EObject> correspondingReferenceList,
+    /**
+     * Creates and adds Uncertainty instances for referenced components if they do
+     * not already exist.
+     * For each EObject in correspondingReferenceList, if no matching Uncertainty
+     * exists in the repository, a new Uncertainty (copied from sourceUncertainty)
+     * is created and linked to the component.
+     *
+     * @param uncertaintyRepo       The UncertaintyAnnotationRepository to add
+     *                              uncertainties to.
+     * @param correspondingElements The list of referenced EObjects.
+     * @param sourceUncertainty     The Uncertainty to copy for new entries.
+     * @return List of newly created Uncertainty instances.
+     */
+    public static List<Uncertainty> createMissingUncertaintiesForReferencedComponents(
+            UncertaintyAnnotationRepository uncertaintyRepo,
+            Iterable<EObject> correspondingElements,
             Uncertainty sourceUncertainty) {
 
         List<Uncertainty> createdUncertainties = new ArrayList<>();
 
-        List<UncertaintyLocation> existingUncertaintyLocations = repo.getUncertainties().stream()
-                .map(u -> u.getUncertaintyLocation())
+        List<UncertaintyLocation> existingUncertaintyLocations = uncertaintyRepo.getUncertainties().stream()
+                .map(Uncertainty::getUncertaintyLocation)
                 .toList();
 
-        for (EObject correspondingElement : correspondingReferenceList) {
+        for (EObject correspondingElement : correspondingElements) {
             List<UncertaintyLocation> matchingLocations = existingUncertaintyLocations.stream()
                     .filter(loc -> loc.getReferencedComponents().contains(correspondingElement))
                     .toList();
 
             if (matchingLocations.isEmpty()) {
-                // No matching UncertaintyLocation found -> create new Uncertainty and
-                // UncertaintyLocation
                 Uncertainty newUncertainty = deepCopyUncertainty(sourceUncertainty);
                 newUncertainty.getUncertaintyLocation().getReferencedComponents().add(correspondingElement);
-                repo.getUncertainties().add(newUncertainty);
+                uncertaintyRepo.getUncertainties().add(newUncertainty);
                 createdUncertainties.add(newUncertainty);
-            } else {
-                // Check if there is any existing Uncertainty that matches sourceUncertainty
-                boolean existingMatch = false;
-                for (UncertaintyLocation loc : matchingLocations) {
-                    existingMatch = compareUncertainties(sourceUncertainty, (Uncertainty) loc.eContainer());
-                    if (existingMatch) {
-                        break;
-                    }
+                continue;
+            }
+            boolean existingMatch = false;
+            for (UncertaintyLocation loc : matchingLocations) {
+                existingMatch = compareUncertainties(sourceUncertainty, (Uncertainty) loc.eContainer());
+                if (existingMatch) {
+                    break;
                 }
-                if (!existingMatch) {
-                    // Different Uncertainty found, create a new one and new UncertaintyLocation
-                    Uncertainty newUncertainty = deepCopyUncertainty(sourceUncertainty);
-                    newUncertainty.getUncertaintyLocation().getReferencedComponents().add(correspondingElement);
-                    repo.getUncertainties().add(newUncertainty);
-                    createdUncertainties.add(newUncertainty);
-                }
+            }
+            if (!existingMatch) {
+                Uncertainty newUncertainty = deepCopyUncertainty(sourceUncertainty);
+                newUncertainty.getUncertaintyLocation().getReferencedComponents().add(correspondingElement);
+                uncertaintyRepo.getUncertainties().add(newUncertainty);
+                createdUncertainties.add(newUncertainty);
             }
         }
 

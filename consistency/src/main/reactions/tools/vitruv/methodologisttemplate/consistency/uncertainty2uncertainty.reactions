@@ -48,16 +48,16 @@ routine createAndRegisterRoots(uncertaintyModel::UncertaintyAnnotationRepository
 
 reaction ReferenceInsertedIntoUncertaintyLocation {
     after element EObject inserted in uncertaintyModel::UncertaintyLocation[referencedComponents]
-    call createCorrespondingUncertaintyReference(affectedEObject.eContainer() as Uncertainty, newValue)
+    call createCorrespondingUncertaintiesToReference(affectedEObject.eContainer() as Uncertainty, newValue)
 }
 
 
-routine createCorrespondingUncertaintyReference(uncertaintyModel::Uncertainty sourceUncertainty, EObject referencedElement) {
+routine createCorrespondingUncertaintiesToReference(uncertaintyModel::Uncertainty sourceUncertainty, EObject referencedElement) {
     match {
         val correspondingReferenceList = retrieve many EObject corresponding to referencedElement
     }
     update {
-        val uncertainties = UncertaintyReactionsHelper.createUncertaintyForReferencedComponent(
+        val uncertainties = UncertaintyReactionsHelper.createMissingUncertaintiesForReferencedComponents(
             sourceUncertainty.eContainer() as UncertaintyAnnotationRepository, correspondingReferenceList, sourceUncertainty);
         for (uncertainty : uncertainties) {
             addCorrespondenceBetween(sourceUncertainty, uncertainty);
