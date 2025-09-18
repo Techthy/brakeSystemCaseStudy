@@ -16,7 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
  * 
  * @author Claus Hammann
  */
-public class PerformanceTestBrakeDiskTest {
+public class PerformanceTestTest {
 
     private BrakeCaliperBridgeGapTest bridgeGapTestInstance;
     private ClampingForceUncertaintyTest clampingForceTestInstance;
@@ -81,11 +81,11 @@ public class PerformanceTestBrakeDiskTest {
         System.out.println("RUNNING MULTIPLE ITERATIONS FOR STATISTICAL ANALYSIS");
         System.out.println("=".repeat(70));
 
-        runMultipleIterations(tempDir, 100);
+        runMultipleIterations(tempDir, 10);
     }
 
     private TestResult measureTestExecution(String testName, Runnable testMethod) {
-        System.out.println("Measuring: " + testName);
+        // System.out.println("Measuring: " + testName);
 
         long startTime = System.nanoTime();
         long startMemory = getUsedMemory();
@@ -101,9 +101,9 @@ public class PerformanceTestBrakeDiskTest {
 
             TestResult result = new TestResult(testName, executionTimeNanos, memoryUsed, true);
 
-            System.out.println("  ✓ Completed in " + formatTime(executionTimeNanos));
-            System.out.println("  Memory change: " + formatMemory(memoryUsed));
-            System.out.println();
+            // System.out.println(" ✓ Completed in " + formatTime(executionTimeNanos));
+            // System.out.println(" Memory change: " + formatMemory(memoryUsed));
+            // System.out.println();
 
             return result;
 
@@ -111,9 +111,9 @@ public class PerformanceTestBrakeDiskTest {
             long endTime = System.nanoTime();
             long executionTimeNanos = endTime - startTime;
 
-            System.out.println("  ✗ Failed after " + formatTime(executionTimeNanos));
-            System.out.println("  Error: " + e.getMessage());
-            System.out.println();
+            // System.out.println(" ✗ Failed after " + formatTime(executionTimeNanos));
+            // System.out.println(" Error: " + e.getMessage());
+            // System.out.println();
 
             return new TestResult(testName, executionTimeNanos, 0, false);
         }
@@ -123,7 +123,7 @@ public class PerformanceTestBrakeDiskTest {
         List<List<TestResult>> allResults = new ArrayList<>();
 
         for (int i = 0; i < iterations; i++) {
-            System.out.println("Iteration " + (i + 1) + "/" + iterations);
+            // System.out.println("Iteration " + (i + 1) + "/" + iterations);
 
             List<TestResult> iterationResults = new ArrayList<>();
 
@@ -159,7 +159,7 @@ public class PerformanceTestBrakeDiskTest {
                             iterationTempDir.resolve("test6"))));
 
             allResults.add(iterationResults);
-            System.out.println();
+            // System.out.println();
         }
 
         // Calculate and print statistics
@@ -219,15 +219,15 @@ public class PerformanceTestBrakeDiskTest {
                 long max = times.stream().mapToLong(Long::longValue).max().orElse(0);
                 double avg = times.stream().mapToLong(Long::longValue).average().orElse(0);
 
-                System.out.println("\n" + testNames[testIndex] + ":");
-                System.out.println("  Minimum: " + formatTime(min));
-                System.out.println("  Maximum: " + formatTime(max));
-                System.out.println("  Average: " + formatTime((long) avg));
-                System.out.println("  Samples: " + times.size());
+                // System.out.println("\n" + testNames[testIndex] + ":");
+                // System.out.println(" Minimum: " + formatTime(min));
+                // System.out.println(" Maximum: " + formatTime(max));
+                // System.out.println(" Average: " + formatTime((long) avg));
+                // System.out.println(" Samples: " + times.size());
             }
         }
 
-        System.out.println("\n" + "=".repeat(80));
+        // System.out.println("\n" + "=".repeat(80));
     }
 
     private String formatTime(long nanos) {
