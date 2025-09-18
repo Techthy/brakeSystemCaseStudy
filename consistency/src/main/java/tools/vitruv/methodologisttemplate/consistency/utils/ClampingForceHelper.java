@@ -2,24 +2,25 @@ package tools.vitruv.methodologisttemplate.consistency.utils;
 
 import java.util.List;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 import brakesystem.BrakeCaliper;
+import tools.vitruv.methodologisttemplate.consistency.UncertaintyReactionsHelper;
 import tools.vitruv.stoex.stoex.Expression;
-import uncertainty.Effect;
-import uncertainty.Pattern;
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyAnnotationRepository;
-import uncertainty.UncertaintyFactory;
-import uncertainty.UncertaintyLocation;
 import uncertainty.UncertaintyLocationType;
-import uncertainty.UncertaintyPerspective;
 
 public class ClampingForceHelper {
 
     /**
+     * Recomputes the clamping force of the given caliper, taking into account any
+     * uncertainties on piston diameter or hydraulic pressure. If uncertainties are
+     * present, the clamping force is computed as an uncertainty expression and a
+     * corresponding Uncertainty instance is created. If no uncertainties are
+     * present, the clamping force is computed as a deterministic value.
      * 
-     * @param caliper
+     * @param caliper         the BrakeCaliper to update
+     * @param uncertaintyRepo the UncertaintyAnnotationRepository containing
+     *                        uncertainties
      */
     public static void recomputeClampingForce(BrakeCaliper caliper, UncertaintyAnnotationRepository uncertaintyRepo) {
         if (handleUncertaintyClampingForce(caliper, uncertaintyRepo)) {
@@ -31,7 +32,18 @@ public class ClampingForceHelper {
         caliper.setClampingForceInN(force);
     }
 
-    public static boolean handleUncertaintyClampingForce(BrakeCaliper caliper,
+    /**
+     * If uncertainties for piston diameter or hydraulic pressure exist for the
+     * given caliper, computes the clamping force as an uncertainty expression and
+     * creates a corresponding Uncertainty instance. Returns true if uncertainties
+     * were found and handled, false otherwise.
+     * 
+     * @param caliper         the BrakeCaliper to update
+     * @param uncertaintyRepo the UncertaintyAnnotationRepository containing
+     *                        uncertainties
+     * @return true if uncertainties were found and handled, false otherwise
+     */
+    private static boolean handleUncertaintyClampingForce(BrakeCaliper caliper,
             UncertaintyAnnotationRepository uncertaintyRepo) {
 
         List<Uncertainty> uncertainties = uncertaintyRepo.getUncertainties().stream()
@@ -54,7 +66,7 @@ public class ClampingForceHelper {
         Expression result = stoexHelper.evaluateToStoexExpression(expr);
         caliper.setClampingForceInN(stoexHelper.getMean(result).doubleValue());
 
-        Uncertainty clampingForceUncertainty = copyUncertainty(uncertainties.get(0));
+        Uncertainty clampingForceUncertainty = UncertaintyReactionsHelper.deepCopyUncertainty(uncertainties.get(0));
         clampingForceUncertainty.getUncertaintyLocation().getReferencedComponents().add(caliper);
         clampingForceUncertainty.getUncertaintyLocation().setParameterLocation("clampingForceInN");
         clampingForceUncertainty.getEffect().setExpression(result);
@@ -72,40 +84,6 @@ public class ClampingForceHelper {
                 .map(u -> u.getEffect().getExpression())
                 .findFirst()
                 .orElse(null);
-    }
-
-    private static Uncertainty copyUncertainty(Uncertainty original) {
-        Uncertainty copy = uncertainty.UncertaintyFactory.eINSTANCE.createUncertainty();
-        copy.setId(EcoreUtil.generateUUID());
-        copy.setKind(original.getKind());
-        copy.setNature(original.getNature());
-        copy.setReducability(original.getReducability());
-        // Deep copy of UncertaintyLocation
-        UncertaintyLocation originalLocation = original.getUncertaintyLocation();
-        UncertaintyLocation copyLocation = UncertaintyFactory.eINSTANCE.createUncertaintyLocation();
-        copyLocation.setLocation(originalLocation.getLocation());
-        copyLocation.setSpecification(originalLocation.getSpecification());
-        copy.setUncertaintyLocation(copyLocation);
-        // Deep copy of Effect
-        Effect originalEffect = original.getEffect();
-        Effect copyEffect = UncertaintyFactory.eINSTANCE.createEffect();
-        copyEffect.setSpecification(originalEffect.getSpecification());
-        copyEffect.setRepresentation(originalEffect.getRepresentation());
-        copyEffect.setStochasticity(originalEffect.getStochasticity());
-        copy.setEffect(copyEffect);
-        // Deep copy of Pattern
-        Pattern originalPattern = original.getPattern();
-        Pattern copyPattern = UncertaintyFactory.eINSTANCE.createPattern();
-        copyPattern.setPatternType(originalPattern.getPatternType());
-        copy.setPattern(copyPattern);
-        // Deep copy of UncertaintyPerspective
-        UncertaintyPerspective originalPerspective = original.getPerspective();
-        UncertaintyPerspective copyPerspective = UncertaintyFactory.eINSTANCE.createUncertaintyPerspective();
-        copyPerspective.setPerspective(originalPerspective.getPerspective());
-        copyPerspective.setSpecification(originalPerspective.getSpecification());
-        copy.setPerspective(copyPerspective);
-        copy.setOnDelete(original.getOnDelete());
-        return copy;
     }
 
 }

@@ -1,23 +1,12 @@
 
-import java.util.List;
-import java.util.HashMap;
 
 import uncertainty.Uncertainty;
-import uncertainty.UncertaintyLocation;
-import uncertainty.UncertaintyFactory;
 import uncertainty.StochasticityEffectType;
 import uncertainty.StructuralEffectTypeRepresentation;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import brakesystem.BrakeDisk;
-import uncertainty.UncertaintyKind;
-import cad.Circle;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import tools.vitruv.stoex.stoex.Expression;
 
 
 
-import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
 
 
 import "http://www.example.org/uncertainty" as uncertaintyModel

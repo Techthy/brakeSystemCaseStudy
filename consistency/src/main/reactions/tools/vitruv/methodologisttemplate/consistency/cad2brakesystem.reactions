@@ -1,7 +1,6 @@
 
 import java.io.File;
 import tools.vitruv.methodologisttemplate.consistency.utils.ReactionsHelper;
-import cad.CADRepository;
 
 import "http://www.example.org/brakesystem" as brakesystemModel
 import "http://www.example.org/cad" as cadModel

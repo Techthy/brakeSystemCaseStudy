@@ -6,8 +6,6 @@ import tools.vitruv.methodologisttemplate.consistency.UncertaintyReactionsHelper
 
 import uncertainty.UncertaintyAnnotationRepository;
 import uncertainty.Uncertainty;
-import uncertainty.UncertaintyLocation;
-import uncertainty.UncertaintyFactory;
 import uncertainty.OnDeleteMode;
 
 
@@ -20,7 +18,6 @@ reactions: uncertainty2uncertainty
 in reaction to changes in uncertaintyModel
 execute actions in uncertaintyModel
 
-// TODO PUT this in own file later
 reaction UncertaintyInsertedAsRoot {
     after element uncertaintyModel::UncertaintyAnnotationRepository inserted as root
     call createAndRegisterRoots(newValue)
@@ -84,7 +81,6 @@ routine deleteCorrespondingUncertainties(uncertaintyModel::Uncertainty sourceUnc
 
         // DELETE MODE: No Action
         if (sourceUncertainty.getOnDelete() === OnDeleteMode.NO_ACTION) {
-            System.out.println("[REACTION] Uncertainty deletion is set to NO_ACTION, no further action taken for: " + sourceUncertainty.getId());
             // No further uncertainties are deleted
             return;
         }
@@ -101,7 +97,7 @@ routine deleteCorrespondingUncertainties(uncertaintyModel::Uncertainty sourceUnc
             }
             
             if (allCorrespondingUncertaintiesManuallySet) {
-                System.out.println("[REACTION] Uncertainty deletion is RESTRICT, but all corresponding uncertainties are set manually, no further action taken for: " + sourceUncertainty.getId());
+                // If all corresponding uncertainties are set manually, no further action is taken
                 return;
             }
 
@@ -112,8 +108,7 @@ routine deleteCorrespondingUncertainties(uncertaintyModel::Uncertainty sourceUnc
             for (correspondingUncertainty : uncertaintiesList) {
                 addCorrespondenceBetween(sourceUncertainty, correspondingUncertainty);
             }
-
-            System.out.println("[REACTION] Uncertainty deletion is RESTRICT, re-adding the source uncertainty: " + sourceUncertainty.getId());
+            // Mode is RESTRICT and there are corresponding uncertainties that are not manually set -> deletion is not allowed
             return;
         }
 
@@ -207,10 +202,10 @@ routine perspectiveChangedRoutine(uncertaintyModel::UncertaintyPerspective persp
     }
 }
 
-//reaction UncertaintyEffectSpecificationChanged {
-//    after attribute replaced at uncertaintyModel::Effect[specification] 
-//    call effectChangedRoutine(affectedEObject, affectedEObject.eContainer() as Uncertainty)
-//}
+reaction UncertaintyEffectSpecificationChanged {
+    after attribute replaced at uncertaintyModel::Effect[specification] 
+    call effectChangedRoutine(affectedEObject, affectedEObject.eContainer() as Uncertainty)
+}
 
 reaction UncertaintyEffectRepresentationChanged {
     after attribute replaced at uncertaintyModel::Effect[representation] 
@@ -229,7 +224,7 @@ routine effectChangedRoutine(uncertaintyModel::Effect effect, uncertaintyModel::
     update {
         // Update all corresponding uncertainties with the new values from the sourceUncertainty
         for (correspondingUncertainty : uncertaintiesList) {
-            // correspondingUncertainty.getEffect().setSpecification(sourceUncertainty.getEffect().getSpecification());
+            correspondingUncertainty.getEffect().setSpecification(sourceUncertainty.getEffect().getSpecification());
             correspondingUncertainty.getEffect().setRepresentation(sourceUncertainty.getEffect().getRepresentation());
             correspondingUncertainty.getEffect().setStochasticity(sourceUncertainty.getEffect().getStochasticity());
         }
