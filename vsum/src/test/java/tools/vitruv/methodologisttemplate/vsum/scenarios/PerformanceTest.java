@@ -16,7 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
  * 
  * @author Claus Hammann
  */
-public class PerformanceTestTest {
+public class PerformanceTest {
 
     private BrakeCaliperBridgeGapTest bridgeGapTestInstance;
     private ClampingForceUncertaintyTest clampingForceTestInstance;
