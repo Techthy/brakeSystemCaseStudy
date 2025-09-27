@@ -16,6 +16,10 @@ import uncertainty.UncertaintyPerspective;
 
 public class UncertaintyReactionsHelper {
 
+    private UncertaintyReactionsHelper() {
+        // Utility class
+    }
+
     /**
      * Creates and adds Uncertainty instances for referenced components if they do
      * not already exist.
