@@ -19,9 +19,9 @@ import brakesystem.BrakesystemFactory;
 import tools.vitruv.framework.views.CommittableView;
 import tools.vitruv.framework.views.View;
 import tools.vitruv.framework.vsum.VirtualModel;
-import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
 import tools.vitruv.methodologisttemplate.vsum.uncertainty.UncertaintyTestFactory;
 import tools.vitruv.methodologisttemplate.vsum.uncertainty.UncertaintyTestUtil;
+import tools.vitruv.stoex.interpreter.StoexEvaluator;
 import tools.vitruv.stoex.stoex.NormalDistribution;
 import tools.vitruv.stoex.stoex.SampledDistribution;
 import tools.vitruv.stoex.stoex.StoexFactory;
@@ -89,7 +89,7 @@ public class ClampingForceUncertaintyTest {
 				.filter(u -> u.getUncertaintyLocation().getParameterLocation()
 						.equals("clampingForceInN"))
 				.findFirst().orElseThrow();
-		StoexConsistencyHelper helper = new StoexConsistencyHelper();
+		StoexEvaluator helper = new StoexEvaluator();
 		Double mean = helper.getMean(clampingForceUncertainty.getEffect().getExpression()).doubleValue();
 		assertEquals(15.707963270, mean, 0.0001);
 
@@ -124,7 +124,7 @@ public class ClampingForceUncertaintyTest {
 				.filter(u -> u.getUncertaintyLocation().getParameterLocation()
 						.equals("clampingForceInN"))
 				.findFirst().orElseThrow();
-		StoexConsistencyHelper helper = new StoexConsistencyHelper();
+		StoexEvaluator helper = new StoexEvaluator();
 		Double mean = helper.getMean(clampingForceUncertainty.getEffect().getExpression()).doubleValue();
 		// PI * (50 * 0.001/2)^2 * 78 * 10^2 = 15.31526419
 		// Approximation error due to sampled distribution

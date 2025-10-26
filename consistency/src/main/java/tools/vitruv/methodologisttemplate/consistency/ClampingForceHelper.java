@@ -3,7 +3,7 @@ package tools.vitruv.methodologisttemplate.consistency;
 import java.util.List;
 
 import brakesystem.BrakeCaliper;
-import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
+import tools.vitruv.stoex.interpreter.StoexEvaluator;
 import tools.vitruv.stoex.stoex.Expression;
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyAnnotationRepository;
@@ -57,13 +57,13 @@ public class ClampingForceHelper {
         Expression pistonDiameterExpr = getParameterUncertainty(uncertainties, caliper, "pistonDiameterInMM");
         Expression hydraulicPressureExpr = getParameterUncertainty(uncertainties, caliper, "hydraulicPressureInBar");
 
-        StoexConsistencyHelper stoexHelper = new StoexConsistencyHelper();
-        stoexHelper.putVariable("d", pistonDiameterExpr != null ? pistonDiameterExpr : caliper.getPistonDiameterInMM());
-        stoexHelper.putVariable("p",
+        StoexEvaluator stoexHelper = new StoexEvaluator();
+        stoexHelper.setVariable("d", pistonDiameterExpr != null ? pistonDiameterExpr : caliper.getPistonDiameterInMM());
+        stoexHelper.setVariable("p",
                 hydraulicPressureExpr != null ? hydraulicPressureExpr : caliper.getHydraulicPressureInBar());
 
         String expr = "PI * ( (d * 0.001) / 2 ) ^ 2 * p * 10 ^ 2";
-        Expression result = stoexHelper.evaluateToStoexExpression(expr);
+        Expression result = stoexHelper.evaluate(expr);
         caliper.setClampingForceInN(stoexHelper.getMean(result).doubleValue());
 
         Uncertainty clampingForceUncertainty = UncertaintyReactionsHelper.deepCopyUncertainty(uncertainties.get(0));

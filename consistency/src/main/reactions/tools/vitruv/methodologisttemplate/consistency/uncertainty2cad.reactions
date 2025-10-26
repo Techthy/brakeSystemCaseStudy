@@ -45,7 +45,6 @@ routine handleBrakeThicknessUncertainty(uncertaintyModel::Effect effect, uncerta
             correspondingUncertainty.effect.setExpression(effect.getExpression());
         }
     }
-
 }
 
 

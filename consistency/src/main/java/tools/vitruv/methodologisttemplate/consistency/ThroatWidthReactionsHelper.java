@@ -4,7 +4,7 @@ import brakesystem.BrakeCaliper;
 import cad.CADRepository;
 import cad.CShape;
 import cad.Circle;
-import tools.vitruv.methodologisttemplate.consistency.utils.StoexConsistencyHelper;
+import tools.vitruv.stoex.interpreter.StoexEvaluator;
 import tools.vitruv.stoex.stoex.Expression;
 import uncertainty.Uncertainty;
 import uncertainty.UncertaintyAnnotationRepository;
@@ -52,13 +52,13 @@ public class ThroatWidthReactionsHelper {
             uncertainty.getUncertaintyLocation().setParameterLocation("throatWidth");
 
             Expression circleExpression = circleUncertainty.getEffect().getExpression();
-            StoexConsistencyHelper stoexHelper = new StoexConsistencyHelper();
+            StoexEvaluator stoexHelper = new StoexEvaluator();
 
-            stoexHelper.putVariable("newValue", circleExpression);
-            stoexHelper.putVariable("oldValue", oldValue);
-            stoexHelper.putVariable("throatWidth", cShape.getThroatWidth());
+            stoexHelper.setVariable("newValue", circleExpression);
+            stoexHelper.setVariable("oldValue", oldValue);
+            stoexHelper.setVariable("throatWidth", cShape.getThroatWidth());
             Expression newThroatWidthExpression = (Expression) stoexHelper
-                    .evaluateToStoexExpression("throatWidth + newValue - oldValue");
+                    .evaluate("throatWidth + newValue - oldValue");
 
             cShape.setThroatWidth(stoexHelper.getMean(newThroatWidthExpression).intValue());
 
