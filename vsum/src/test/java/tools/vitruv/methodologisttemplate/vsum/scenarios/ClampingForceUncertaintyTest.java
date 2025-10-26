@@ -30,6 +30,22 @@ import uncertainty.UncertaintyAnnotationRepository;
 import uncertainty.UncertaintyLocation;
 import uncertainty.UncertaintyLocationType;
 
+/**
+ * This test class tests the propagation of the clamping force and its
+ * dependence on the piston diameter and the hydraulic pressure.
+ * The first test, shows the propagation without using the UnCertaGator.
+ * The second test shows the same propagation but with the UnCertaGator and
+ * uncertainty annotations.
+ * The third test shows the same propagation now using the UnCertaGator with the
+ * StoEx extension.
+ * 
+ * Note: The tests as well as the reactions corresponding to the test are always
+ * assuming that there is exactly one
+ * brake caliper and one brake disk in the brake system and exactly one CShape
+ * and one Circle in the CAD model.
+ *
+ * @author Claus Hammann
+ */
 public class ClampingForceUncertaintyTest {
 
 	@BeforeAll
